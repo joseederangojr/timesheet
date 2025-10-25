@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 use InvalidArgumentException;
-use Throwable;
 
 final class VersionCommand extends Command
 {
@@ -104,49 +105,65 @@ final class VersionCommand extends Command
         return 0;
     }
 
+    /** @throw Exception */
     private function getCurrentVersion(): string
     {
-        $composerPath = base_path('composer.json');
+        $composerPath = \Illuminate\Support\Facades\App::basePath(
+            'composer.json',
+        );
+
+        if (!File::exists($composerPath)) {
+            return '0.0.0';
+        }
 
         try {
-            $composerContent = file_get_contents($composerPath);
-        } catch (Throwable) {
+            $composerContent = File::get($composerPath);
+            /** @var array{version?: string} $composer */
+            $composer = json_decode(
+                $composerContent,
+                true,
+                512,
+                JSON_THROW_ON_ERROR,
+            );
+
+            return $composer['version'] ?? '0.0.0';
+        } catch (Exception) {
             return '0.0.0';
         }
-
-        $composer = json_decode($composerContent, true);
-
-        if (!is_array($composer)) {
-            return '0.0.0';
-        }
-
-        $version = $composer['version'] ?? '0.0.0';
-
-        return is_string($version) ? $version : '0.0.0';
     }
 
+    /** @throw Exception */
     private function updateComposerVersion(string $version): void
     {
-        $composerPath = base_path('composer.json');
+        $composerPath = \Illuminate\Support\Facades\App::basePath(
+            'composer.json',
+        );
+
+        if (!File::exists($composerPath)) {
+            return;
+        }
 
         try {
-            $composerContent = file_get_contents($composerPath);
-        } catch (Throwable) {
-            return;
+            $composerContent = File::get($composerPath);
+            /** @var array{version: string} $composer */
+            $composer = json_decode(
+                $composerContent,
+                true,
+                512,
+                JSON_THROW_ON_ERROR,
+            );
+
+            $composer['version'] = $version;
+
+            File::put(
+                $composerPath,
+                json_encode(
+                    $composer,
+                    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
+                ) . "\n",
+            );
+        } catch (Exception) {
+            // Silently fail for invalid JSON - don't update the file
         }
-
-        $composer = json_decode($composerContent, true);
-
-        if (!is_array($composer)) {
-            return;
-        }
-
-        $composer['version'] = $version;
-
-        file_put_contents(
-            $composerPath,
-            json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) .
-                "\n",
-        );
     }
 }
