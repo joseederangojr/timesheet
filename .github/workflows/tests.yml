@@ -26,7 +26,10 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
+
+      - name: Install Dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Install Node Dependencies
         run: npm install
@@ -68,13 +71,16 @@ jobs:
           restore-keys: ${{ runner.os }}-phpstan-
       - run: mkdir -p /tmp/phpstan
 
-      - name: Setup laravel
+      - name: Test
         run: |
-          composer install --no-interaction --prefer-dist --optimize-autoloader
           cp .env.example .env
           php artisan key:generate
+          echo "Env CI Vars"
           cat .env
+          echo "Env Testing Vars"
+          cat .env.test
           composer test
+
 
       - name: Store artifacts
         uses: actions/upload-artifact@v4
