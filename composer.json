@@ -3,7 +3,7 @@
     "name": "joseederangojr/timesheet",
     "type": "project",
     "description": "Employee Management App - Timesheet SaaS",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "keywords": [
         "laravel",
         "framework",
