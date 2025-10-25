@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -16,6 +15,28 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Version
+    |--------------------------------------------------------------------------
+    |
+    | This value is the version of your application. It is used to display
+    | version information in the application and can be accessed anywhere
+    | using the config('app.version') helper.
+    |
+    */
+
+    'version' => (function () {
+        $composerPath = base_path('composer.json');
+        if (file_exists($composerPath)) {
+            $composer = json_decode(file_get_contents($composerPath), true);
+
+            return $composer['version'] ?? '0.0.0';
+        }
+
+        return '0.0.0';
+    })(),
 
     /*
     |--------------------------------------------------------------------------
@@ -102,9 +123,7 @@ return [
     'key' => env('APP_KEY'),
 
     'previous_keys' => [
-        ...array_filter(
-            explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
-        ),
+        ...array_filter(explode(',', (string) env('APP_PREVIOUS_KEYS', ''))),
     ],
 
     /*
@@ -124,5 +143,4 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-
 ];

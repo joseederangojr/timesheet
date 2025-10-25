@@ -5,21 +5,27 @@
         "build": "vite build",
         "build:ssr": "vite build && vite build --ssr",
         "dev": "vite",
-        "lint": "eslint . --fix && prettier --write resources/",
-        "lint:php": "vendor/bin/pint --parallel",
-        "lint:js": "eslint . --fix && prettier --write resources/",
-        "prettier:php": "prettier --write 'app/**/*.php' 'database/**/*.php' 'tests/**/*.php' 'config/**/*.php'",
-        "test:lint": "eslint . && prettier --check resources/",
-        "test:lint:php": "vendor/bin/pint --parallel --test",
-        "test:lint:js": "eslint . && prettier --check resources/",
+        "lint": "eslint resources/js --fix",
+        "format": "prettier --write resources/",
+        "format:php": "prettier --write 'app/**/*.php' 'database/**/*.php' 'tests/**/*.php' 'config/**/*.php'",
         "test:types": "tsc --noEmit",
-        "prepare": "husky"
+        "prepare": "husky",
+        "commit": "cz",
+        "release": "semantic-release"
     },
     "devDependencies": {
+        "@commitlint/cli": "^20.1.0",
+        "@commitlint/config-conventional": "^20.0.0",
         "@eslint/js": "^9.38.0",
         "@laravel/vite-plugin-wayfinder": "^0.1.7",
         "@prettier/plugin-php": "^0.24.0",
+        "@semantic-release/changelog": "^6.0.3",
+        "@semantic-release/exec": "^7.1.0",
+        "@semantic-release/git": "^10.0.1",
         "@types/node": "^24.9.1",
+        "commitizen": "^4.3.1",
+        "conventional-changelog-conventionalcommits": "^9.1.0",
+        "cz-conventional-changelog": "^3.3.0",
         "eslint": "^9.38.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-react": "^7.37.5",
@@ -31,6 +37,7 @@
         "prettier": "^3.6.2",
         "prettier-plugin-organize-imports": "^4.3.0",
         "prettier-plugin-tailwindcss": "^0.7.1",
+        "semantic-release": "^25.0.1",
         "shadcn": "^3.5.0",
         "typescript-eslint": "^8.46.2"
     },
@@ -99,5 +106,10 @@
         "@rollup/rollup-linux-x64-gnu": "4.52.5",
         "@tailwindcss/oxide-linux-x64-gnu": "^4.1.16",
         "lightningcss-linux-x64-gnu": "^1.30.2"
+    },
+    "config": {
+        "commitizen": {
+            "path": "./node_modules/cz-conventional-changelog"
+        }
     }
 }

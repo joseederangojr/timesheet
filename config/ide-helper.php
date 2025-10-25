@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Filename
@@ -126,8 +125,10 @@ return [
     'include_helpers' => false,
 
     'helper_files' => [
-        base_path().'/vendor/laravel/framework/src/Illuminate/Support/helpers.php',
-        base_path().'/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php',
+        base_path() .
+        '/vendor/laravel/framework/src/Illuminate/Support/helpers.php',
+        base_path() .
+        '/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php',
     ],
 
     /*
@@ -143,9 +144,7 @@ return [
     |
     */
 
-    'model_locations' => [
-        'app',
-    ],
+    'model_locations' => ['app'],
 
     /*
     |--------------------------------------------------------------------------
@@ -185,7 +184,10 @@ return [
     */
 
     'extra' => [
-        'Eloquent' => [Illuminate\Database\Eloquent\Builder::class, Illuminate\Database\Query\Builder::class],
+        'Eloquent' => [
+            Illuminate\Database\Eloquent\Builder::class,
+            Illuminate\Database\Query\Builder::class,
+        ],
         'Session' => [Illuminate\Session\Store::class],
     ],
 
@@ -289,7 +291,8 @@ return [
     |
     */
     'macro_default_return_types' => [
-        Illuminate\Http\Client\Factory::class => Illuminate\Http\Client\PendingRequest::class,
+        Illuminate\Http\Client\Factory::class =>
+            Illuminate\Http\Client\PendingRequest::class,
     ],
 
     /*
@@ -349,8 +352,5 @@ return [
     | The specified commands should run after migrations are finished running.
     |
     */
-    'post_migrate' => [
-        'ide-helper:models --nowrite',
-    ],
-
+    'post_migrate' => ['ide-helper:models --nowrite'],
 ];

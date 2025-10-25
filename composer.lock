@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "242a7da17a8e728b555da67006bab07c",
+    "content-hash": "1315ab52283dfbd894c71d81c70a5aff",
     "packages": [
         {
             "name": "brick/math",
@@ -8518,16 +8518,16 @@
         },
         {
             "name": "laravel/boost",
-            "version": "v1.5.0",
+            "version": "dev-calebdw/push-wvrkwqzozmwy",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/boost.git",
-                "reference": "20486fad67ee3e20f491e855aa6b9844b8140981"
+                "url": "https://github.com/calebdw/laravel-boost.git",
+                "reference": "87e1cdf2b3cd8157348e9532e01c76268dafe4e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/boost/zipball/20486fad67ee3e20f491e855aa6b9844b8140981",
-                "reference": "20486fad67ee3e20f491e855aa6b9844b8140981",
+                "url": "https://api.github.com/repos/calebdw/laravel-boost/zipball/87e1cdf2b3cd8157348e9532e01c76268dafe4e2",
+                "reference": "87e1cdf2b3cd8157348e9532e01c76268dafe4e2",
                 "shasum": ""
             },
             "require": {
@@ -8551,13 +8551,13 @@
             },
             "type": "library",
             "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                },
                 "laravel": {
                     "providers": [
                         "Laravel\\Boost\\BoostServiceProvider"
                     ]
-                },
-                "branch-alias": {
-                    "dev-master": "1.x-dev"
                 }
             },
             "autoload": {
@@ -8565,7 +8565,32 @@
                     "Laravel\\Boost\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "lint": [
+                    "pint",
+                    "phpstan --memory-limit=-1",
+                    "rector"
+                ],
+                "test": [
+                    "pest"
+                ],
+                "test:lint": [
+                    "pint --test",
+                    "rector --dry-run"
+                ],
+                "test:types": [
+                    "phpstan"
+                ],
+                "check": [
+                    "@composer lint",
+                    "@composer test"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -8580,7 +8605,7 @@
                 "issues": "https://github.com/laravel/boost/issues",
                 "source": "https://github.com/laravel/boost"
             },
-            "time": "2025-10-24T06:22:38+00:00"
+            "time": "2025-10-24T16:47:08+00:00"
         },
         {
             "name": "laravel/mcp",
@@ -12968,6 +12993,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "laravel/boost": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
