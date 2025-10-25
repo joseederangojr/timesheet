@@ -4,57 +4,73 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\File;
 
-beforeEach(function () {
-    $this->composerBackup = File::get(base_path('composer.json'));
-});
+function mockComposerContent(string $version = '1.0.0'): string
+{
+    return json_encode(
+        [
+            'name' => 'test/app',
+            'version' => $version,
+            'description' => 'Test application',
+        ],
+        JSON_PRETTY_PRINT,
+    );
+}
 
-afterEach(function () {
-    File::put(base_path('composer.json'), $this->composerBackup);
-});
+it('shows current version', function (): void {
+    File::shouldReceive('exists')
+        ->with(base_path('composer.json'))
+        ->andReturn(true);
 
-it('shows current version', function () {
+    File::shouldReceive('get')
+        ->with(base_path('composer.json'))
+        ->andReturn(mockComposerContent());
+
     $this->artisan('version show')
-        ->expectsOutput('Current version: 0.1.0')
+        ->expectsOutput('Current version: 1.0.0')
         ->assertExitCode(0);
 });
 
-it('can bump patch version', function () {
-    $this->artisan('version bump patch')
-        ->expectsOutput('Version bumped from 0.1.0 to 0.1.1')
+it('can bump version', function (string $type, string $expected): void {
+    File::shouldReceive('exists')
+        ->with(base_path('composer.json'))
+        ->andReturn(true);
+
+    File::shouldReceive('get')
+        ->with(base_path('composer.json'))
+        ->andReturn(mockComposerContent());
+
+    File::shouldReceive('put')
+        ->with(base_path('composer.json'), Mockery::any())
+        ->once();
+
+    $this->artisan('version bump ' . $type)
+        ->expectsOutput('Version bumped from 1.0.0 to ' . $expected)
         ->assertExitCode(0);
+})->with([
+    'patch' => ['patch', '1.0.1'],
+    'minor' => ['minor', '1.1.0'],
+    'major' => ['major', '2.0.0'],
+]);
 
-    $composer = json_decode(File::get(base_path('composer.json')), true);
-    expect($composer['version'])->toBe('0.1.1');
-});
+it('can set specific version', function (): void {
+    File::shouldReceive('exists')
+        ->with(base_path('composer.json'))
+        ->andReturn(true);
 
-it('can bump minor version', function () {
-    $this->artisan('version bump minor')
-        ->expectsOutput('Version bumped from 0.1.0 to 0.2.0')
-        ->assertExitCode(0);
+    File::shouldReceive('get')
+        ->with(base_path('composer.json'))
+        ->andReturn(mockComposerContent());
 
-    $composer = json_decode(File::get(base_path('composer.json')), true);
-    expect($composer['version'])->toBe('0.2.0');
-});
+    File::shouldReceive('put')
+        ->with(base_path('composer.json'), Mockery::any())
+        ->once();
 
-it('can bump major version', function () {
-    $this->artisan('version bump major')
-        ->expectsOutput('Version bumped from 0.1.0 to 1.0.0')
-        ->assertExitCode(0);
-
-    $composer = json_decode(File::get(base_path('composer.json')), true);
-    expect($composer['version'])->toBe('1.0.0');
-});
-
-it('can set specific version', function () {
     $this->artisan('version set --ver=2.5.3')
-        ->expectsOutput('Version changed from 0.1.0 to 2.5.3')
+        ->expectsOutput('Version changed from 1.0.0 to 2.5.3')
         ->assertExitCode(0);
-
-    $composer = json_decode(File::get(base_path('composer.json')), true);
-    expect($composer['version'])->toBe('2.5.3');
 });
 
-it('validates semantic version format when setting', function () {
+it('validates semantic version format when setting', function (): void {
     $this->artisan('version set --ver=invalid')
         ->expectsOutput(
             'Version must follow semantic versioning format (x.y.z)',
@@ -62,23 +78,126 @@ it('validates semantic version format when setting', function () {
         ->assertExitCode(1);
 });
 
-it('requires version option when setting', function () {
+it('requires version option when setting', function (): void {
     $this->artisan('version set')
         ->expectsOutput('Please provide a version with --ver option')
         ->assertExitCode(1);
 });
 
-it('handles invalid action', function () {
-    $this->artisan('version invalid')
+it('handles invalid version format in composer.json', function (): void {
+    File::shouldReceive('exists')
+        ->with(base_path('composer.json'))
+        ->andReturn(true);
+
+    File::shouldReceive('get')
+        ->with(base_path('composer.json'))
+        ->andReturn(mockComposerContent('invalid-version'));
+
+    $this->artisan('version bump patch')
+        ->expectsOutput('Invalid current version format in composer.json')
+        ->assertExitCode(1);
+});
+
+it('handles invalid action', function (): void {
+    $this->artisan('version invalid-action')
         ->expectsOutput(
-            "Invalid action: invalid. Use 'show', 'bump', or 'set'.",
+            "Invalid action: invalid-action. Use 'show', 'bump', or 'set'.",
         )
         ->assertExitCode(1);
 });
 
-it('handles invalid bump type', function () {
-    expect(fn() => $this->artisan('version bump invalid'))->toThrow(
-        InvalidArgumentException::class,
-        'Invalid version type: invalid',
-    );
+it('handles invalid bump type', function (): void {
+    File::shouldReceive('exists')
+        ->with(base_path('composer.json'))
+        ->andReturn(true);
+
+    File::shouldReceive('get')
+        ->with(base_path('composer.json'))
+        ->andReturn(mockComposerContent());
+
+    $this->expectException(InvalidArgumentException::class);
+    $this->expectExceptionMessage('Invalid version type: invalid-type');
+
+    $this->artisan('version bump invalid-type');
+});
+
+it(
+    'returns default version when composer.json does not exist',
+    function (): void {
+        File::shouldReceive('exists')
+            ->with(base_path('composer.json'))
+            ->andReturn(false);
+
+        $this->artisan('version show')
+            ->expectsOutput('Current version: 0.0.0')
+            ->assertExitCode(0);
+    },
+);
+
+it(
+    'returns default version when composer.json has no version field',
+    function (): void {
+        File::shouldReceive('exists')
+            ->with(base_path('composer.json'))
+            ->andReturn(true);
+
+        File::shouldReceive('get')
+            ->with(base_path('composer.json'))
+            ->andReturn(json_encode(['name' => 'test/app'], JSON_PRETTY_PRINT));
+
+        $this->artisan('version show')
+            ->expectsOutput('Current version: 0.0.0')
+            ->assertExitCode(0);
+    },
+);
+
+it(
+    'returns default version when composer.json has invalid json',
+    function (): void {
+        File::shouldReceive('exists')
+            ->with(base_path('composer.json'))
+            ->andReturn(true);
+
+        File::shouldReceive('get')
+            ->with(base_path('composer.json'))
+            ->andReturn('{invalid json}');
+
+        $this->artisan('version show')
+            ->expectsOutput('Current version: 0.0.0')
+            ->assertExitCode(0);
+    },
+);
+
+it(
+    'handles file write when composer.json does not exist during update',
+    function (): void {
+        File::shouldReceive('exists')
+            ->with(base_path('composer.json'))
+            ->andReturn(false)
+            ->twice(); // Once for getCurrentVersion, once for updateComposerVersion
+
+        $this->artisan('version set --ver=1.2.3')
+            ->expectsOutput('Version changed from 0.0.0 to 1.2.3')
+            ->assertExitCode(0);
+    },
+);
+
+it('handles json decode error during update silently', function (): void {
+    File::shouldReceive('exists')
+        ->with(base_path('composer.json'))
+        ->andReturn(true);
+
+    File::shouldReceive('get')
+        ->with(base_path('composer.json'))
+        ->andReturn(mockComposerContent())
+        ->once(); // For getCurrentVersion
+
+    File::shouldReceive('get')
+        ->with(base_path('composer.json'))
+        ->andReturn('{invalid json}')
+        ->once(); // For updateComposerVersion
+
+    $this->artisan('version set --ver=1.2.3')
+        ->expectsOutput('Version changed from 1.0.0 to 1.2.3')
+        ->assertExitCode(0);
 });
