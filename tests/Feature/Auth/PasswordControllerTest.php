@@ -8,13 +8,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed();
 });
 
 it(
     'redirects to dashboard with admin greeting after successful login',
-    function () {
+    function (): void {
         $adminRole = Role::query()->where('name', 'admin')->first();
         $user = User::factory()->create([
             'email' => 'admin@example.com',
@@ -40,7 +40,7 @@ it(
 
 it(
     'redirects to dashboard with employee greeting after successful login',
-    function () {
+    function (): void {
         $employeeRole = Role::query()->where('name', 'employee')->first();
         $user = User::factory()->create([
             'email' => 'employee@example.com',
@@ -64,7 +64,7 @@ it(
     },
 );
 
-it('returns error for invalid credentials', function () {
+it('returns error for invalid credentials', function (): void {
     User::factory()->create([
         'email' => 'test@example.com',
         'password' => 'password',
@@ -86,7 +86,7 @@ it('returns error for invalid credentials', function () {
     $this->assertGuest();
 });
 
-it('validates required fields', function () {
+it('validates required fields', function (): void {
     $response = $this->withSession(['_token' => 'test-token'])->post(
         '/login/password',
         [

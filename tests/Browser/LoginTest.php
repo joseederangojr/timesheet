@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Notification;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed();
 });
 
-it('displays the login page with magic link as default', function () {
+it('displays the login page with magic link as default', function (): void {
     $page = visit('/login');
 
     $page
@@ -26,7 +26,7 @@ it('displays the login page with magic link as default', function () {
         ->assertNoJavascriptErrors();
 });
 
-it('can toggle to password login mode', function () {
+it('can toggle to password login mode', function (): void {
     $page = visit('/login');
 
     $page
@@ -39,7 +39,7 @@ it('can toggle to password login mode', function () {
         ->assertSee('Use Magic Link');
 });
 
-it('can toggle back to magic link mode', function () {
+it('can toggle back to magic link mode', function (): void {
     $page = visit('/login');
 
     $page
@@ -50,7 +50,7 @@ it('can toggle back to magic link mode', function () {
         ->assertSee('Send Magic Link');
 });
 
-it('can send magic link for existing user', function () {
+it('can send magic link for existing user', function (): void {
     Notification::fake();
 
     $user = User::factory()->create([
@@ -65,16 +65,16 @@ it('can send magic link for existing user', function () {
     Notification::assertSentTo($user, MagicLinkNotification::class);
 });
 
-it('shows error for non-existent email in magic link', function () {
+it('shows error for non-existent email in magic link', function (): void {
     $page = visit('/login');
 
     $page
         ->fill('email', 'nonexistent@example.com')
         ->click('Send Magic Link')
-        ->assertSee('couldn\'t find an account');
+        ->assertSee("couldn't find an account");
 });
 
-it('can login with password for existing user', function () {
+it('can login with password for existing user', function (): void {
     $user = User::factory()->create([
         'email' => 'test@example.com',
         'password' => 'password',
@@ -92,7 +92,7 @@ it('can login with password for existing user', function () {
         ->assertSee('Welcome to your dashboard');
 });
 
-it('shows error for invalid password login', function () {
+it('shows error for invalid password login', function (): void {
     User::factory()->create([
         'email' => 'test@example.com',
         'password' => 'password',
@@ -108,7 +108,7 @@ it('shows error for invalid password login', function () {
         ->assertSee('The provided credentials do not match our records');
 });
 
-it('greets admin user with Hello after login', function () {
+it('greets admin user with Hello after login', function (): void {
     $adminRole = Role::query()->where('name', 'admin')->first();
     $user = User::factory()->create([
         'email' => 'admin@example.com',
@@ -128,7 +128,7 @@ it('greets admin user with Hello after login', function () {
         ->assertSee('Hello, Admin User');
 });
 
-it('greets employee user with Hi after login', function () {
+it('greets employee user with Hi after login', function (): void {
     $employeeRole = Role::query()->where('name', 'employee')->first();
     $user = User::factory()->create([
         'email' => 'employee@example.com',
@@ -148,7 +148,7 @@ it('greets employee user with Hi after login', function () {
         ->assertSee('Hi, Employee User');
 });
 
-it('can logout from dashboard', function () {
+it('can logout from dashboard', function (): void {
     $user = User::factory()->create([
         'email' => 'test@example.com',
         'password' => 'password',
