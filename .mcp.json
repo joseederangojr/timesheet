@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "laravel-boost": {
+      "command": "php",
+      "args": [
+        "artisan",
+        "boost:mcp"
+      ]
+    },
+    "shadcn": {
+      "command": "pnpm",
+      "args": [
+        "dlx",
+        "shadcn@latest",
+        "mcp"
+      ]
+    }
+  }
+}
