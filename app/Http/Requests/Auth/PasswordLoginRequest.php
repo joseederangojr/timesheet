@@ -8,11 +8,14 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class PasswordLoginRequest extends FormRequest
 {
-    public function authorize(): bool
+    public function authorize(): true
     {
         return true;
     }
 
+    /**
+     * @return array<string, array<string>>
+     */
     public function rules(): array
     {
         return [
@@ -21,6 +24,9 @@ final class PasswordLoginRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [

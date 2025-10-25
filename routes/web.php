@@ -29,7 +29,7 @@ Route::post('/logout', [
     ->name('logout')
     ->middleware('auth');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function (): void {
     Route::get(
         '/dashboard',
         fn() => Inertia::render('Dashboard', [
