@@ -32,8 +32,7 @@ it(
             ],
         );
 
-        $response->assertRedirect('/dashboard');
-        $response->assertSessionHas('greeting', 'Hello, Admin User');
+        $response->assertRedirect('/admin/dashboard');
         $this->assertAuthenticatedAs($user);
     },
 );

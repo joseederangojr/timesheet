@@ -37,3 +37,10 @@ Route::middleware('auth')->group(function (): void {
         ]),
     )->name('dashboard');
 });
+
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function (): void {
+    Route::get(
+        '/dashboard',
+        fn () => Inertia::render('admin/Dashboard'),
+    )->name('dashboard');
+});

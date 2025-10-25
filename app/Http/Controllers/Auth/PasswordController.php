@@ -39,6 +39,10 @@ final readonly class PasswordController
 
         $greeting = $this->getGreetingForUser($user);
 
+        if ($this->checkUserIsAdminQuery->handle($user)) {
+            return to_route('admin.dashboard');
+        }
+
         return to_route('dashboard')->with('greeting', $greeting);
     }
 

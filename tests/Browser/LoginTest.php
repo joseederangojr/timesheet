@@ -124,7 +124,7 @@ it('greets admin user with Hello after login', function (): void {
         ->fill('email', 'admin@example.com')
         ->fill('password', 'password')
         ->click('Sign In')
-        ->assertPathIs('/dashboard')
+        ->assertPathIs('/admin/dashboard')
         ->assertSee('Hello, Admin User');
 });
 

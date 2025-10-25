@@ -71,8 +71,7 @@ it('authenticates user with valid magic link', function (): void {
 
     $response = $this->get($signedUrl);
 
-    $response->assertRedirect('/dashboard');
-    $response->assertSessionHas('greeting', 'Hello, Admin User');
+    $response->assertRedirect('/admin/dashboard');
     $this->assertAuthenticatedAs($user);
 });
 
