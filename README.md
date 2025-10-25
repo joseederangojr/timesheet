@@ -1,54 +1,25 @@
-- Inertia & React (this project) version: **[github.com/nunomaduro/laravel-starter-kit-inertia-react](https://github.com/nunomaduro/laravel-starter-kit-inertia-react)**
-- Blade version: **[github.com/nunomaduro/laravel-starter-kit](https://github.com/nunomaduro/laravel-starter-kit)**
+# Timesheet - Employee Management SaaS
 
-<p align="center">
-    <a href="https://youtu.be/VhzP0XWGTC4" target="_blank">
-        <img src="https://github.com/nunomaduro/laravel-starter-kit/blob/main/art/banner.png" alt="Overview Laravel Starter Kit" style="width:70%;">
-    </a>
-</p>
+**Timesheet** is a modern, type-safe employee management and timesheet tracking application built with [Laravel](https://laravel.com), [Inertia.js](https://inertiajs.com), and [React](https://react.dev). This SaaS application provides comprehensive time tracking, employee management, and reporting capabilities for businesses of all sizes.
 
-<p>
-    <a href="https://github.com/nunomaduro/laravel-starter-kit-inertia-react/actions"><img src="https://github.com/nunomaduro/laravel-starter-kit-inertia-react/actions/workflows/tests.yml/badge.svg" alt="Build Status"></a>
-    <a href="https://packagist.org/packages/nunomaduro/laravel-starter-kit-inertia-react"><img src="https://img.shields.io/packagist/dt/nunomaduro/laravel-starter-kit-inertia-react" alt="Total Downloads"></a>
-    <a href="https://packagist.org/packages/nunomaduro/laravel-starter-kit-inertia-react"><img src="https://img.shields.io/packagist/v/nunomaduro/laravel-starter-kit-inertia-react" alt="Latest Stable Version"></a>
-    <a href="https://packagist.org/packages/nunomaduro/laravel-starter-kit-inertia-react"><img src="https://img.shields.io/packagist/l/nunomaduro/laravel-starter-kit-inertia-react" alt="License"></a>
-</p>
+## Technical Excellence
 
-**Laravel Starter Kit (Inertia & React)** is an ultra-strict, type-safe [Laravel](https://laravel.com) skeleton engineered for developers who refuse to compromise on code quality. This opinionated starter kit enforces rigorous development standards through meticulous tooling configuration and architectural decisions that prioritize type safety, immutability, and fail-fast principles.
-
-## Why This Starter Kit?
-
-Modern PHP has evolved into a mature, type-safe language, yet many Laravel projects still operate with loose conventions and optional typing. This starter kit changes that paradigm by enforcing:
-
-- **Fully Actions-Oriented Architecture**: Every operation is encapsulated in a single-action class
-- **Cruddy by Design**: Standardized CRUD operations for all controllers, actions, and Inertia & React pages
-- **100% Type Coverage**: Every method, property, and parameter is explicitly typed
-- **Zero Tolerance for Code Smells**: Rector, PHPStan, ESLint, and Prettier at maximum strictness catch issues before they become bugs
-- **Immutable-First Architecture**: Data structures favor immutability to prevent unexpected mutations
-- **Fail-Fast Philosophy**: Errors are caught at compile-time, not runtime
-- **Automated Code Quality**: Pre-configured tools ensure consistent, pristine code across your entire team
-- **Just Better Laravel Defaults**: Thanks to **[Essentials](https://github.com/nunomaduro/essentials)** / strict models, auto eager loading, immutable dates, and more...
-- **AI Guidelines**: Integrated AI Guidelines to assist in maintaining code quality and consistency
-- **Full Testing Suite**: More than 150 tests with 100% code coverage using Pest
-- 
-This isn't just another Laravel boilerplate—it's a statement that PHP applications can and should be built with the same rigor as strongly-typed languages like Rust or TypeScript.
+- **Type-Safe Architecture**: Built with PHP 8.4+ and TypeScript for maximum reliability
+- **Actions-Oriented Design**: Clean, testable business logic with single-action classes
+- **100% Test Coverage**: Comprehensive test suite using Pest
+- **Modern UI**: Built with React, Tailwind CSS v4, and shadcn/ui components
+- **Real-Time Updates**: Live notifications and updates using Laravel Echo
+- **API-First**: RESTful API for mobile apps and third-party integrations
 
 ## Getting Started
 
-> **Requires [PHP 8.4+](https://php.net/releases/) and a code coverage driver like [xdebug](https://xdebug.org/docs/install)**.
+> **Requires [PHP 8.4+](https://php.net/releases/), [Node.js 18+](https://nodejs.org/), and [Composer](https://getcomposer.org)**.
 
-Create your type-safe Laravel application using [Composer](https://getcomposer.org):
-
-```bash
-composer create-project nunomaduro/laravel-starter-kit-inertia-react --prefer-dist example-app
-```
-
-### Initial Setup
-
-Navigate to your project and complete the setup:
+Clone and set up the Timesheet application:
 
 ```bash
-cd example-app
+git clone <repository-url> timesheet
+cd timesheet
 
 # Setup the project
 composer setup
@@ -57,13 +28,18 @@ composer setup
 composer dev
 ```
 
-### Optional: Browser Testing Setup
+The application will be available at `http://localhost:8000`.
 
-If you plan to use Pest's browser testing capabilities:
+### Database Setup
+
+The application uses SQLite by default for development. For production, configure your preferred database in the `.env` file:
 
 ```bash
-npm install playwright
-npx playwright install
+# Copy and configure environment variables
+cp .env.example .env
+
+# Run migrations and seed sample data
+php artisan migrate --seed
 ```
 
 ### Verify Installation
@@ -76,24 +52,52 @@ composer test
 
 You should see 100% test coverage and all quality checks passing.
 
-## Available Tooling
+## Development Commands
 
-### Development
-- `composer dev` - Starts Laravel server, queue worker, log monitoring, and Vite dev server concurrently
+### Development Server
 
-### Code Quality
-- `composer lint` - Runs Rector (refactoring), Pint (PHP formatting), and Prettier (JS/TS formatting)
-- `composer test:lint` - Dry-run mode for CI/CD pipelines
+- `composer dev` - Starts Laravel serve, queue worker, log monitoring, and Vite dev server concurrently
+- `php artisan serve` - Laravel development server only
+- `pnpm run dev` - Vite development server for frontend assets
 
-### Testing
-- `composer test:type-coverage` - Ensures 100% type coverage with Pest
-- `composer test:types` - Runs PHPStan at level 9 (maximum strictness)
-- `composer test:unit` - Runs Pest tests with 100% code coverage requirement
-- `composer test` - Runs the complete test suite (type coverage, unit tests, linting, static analysis)
+### Database
 
-### Maintenance
-- `composer update:requirements` - Updates all PHP and NPM dependencies to latest versions
+- `php artisan migrate` - Run database migrations
+- `php artisan migrate --seed` - Run migrations and seed sample data
+- `php artisan migrate:refresh --seed` - Reset database with fresh data
+
+### Code Quality & Testing
+
+- `composer test` - Run complete test suite with 100% coverage requirement
+- `composer lint` - Format code with Rector, Pint, and Prettier
+- `pnpm run lint` - Lint JavaScript/TypeScript code
+- `pnpm run format` - Format all code files
+
+### Production
+
+- `composer install --no-dev --optimize-autoloader` - Install production dependencies
+- `pnpm run build` - Build optimized frontend assets
+- `php artisan config:cache` - Cache configuration for production
+
+## Tech Stack
+
+- **Backend**: Laravel 12 with PHP 8.4+
+- **Frontend**: React 19 with TypeScript
+- **Styling**: Tailwind CSS v4 with shadcn/ui components
+- **Database**: SQLite (development) / PostgreSQL, MySQL (production)
+- **Testing**: Pest with 100% coverage requirement
+- **Code Quality**: PHPStan, Rector, ESLint, Prettier
+- **Bundling**: Vite with Laravel Wayfinder
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Run tests (`composer test`)
+4. Commit changes (`git commit -m 'Add amazing feature'`)
+5. Push to branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
 
 ## License
 
-**Laravel Starter Kit Inertia React** was created by **[Nuno Maduro](https://x.com/enunomaduro)** under the **[MIT license](https://opensource.org/licenses/MIT)**.
+This project is licensed under the **[MIT License](https://opensource.org/licenses/MIT)**.

@@ -27,12 +27,24 @@ return [
     |
     */
 
-    'version' => (function () {
+    'version' => (function (): string {
         $composerPath = base_path('composer.json');
         if (file_exists($composerPath)) {
-            $composer = json_decode(file_get_contents($composerPath), true);
+            $composerContent = file_get_contents($composerPath);
 
-            return $composer['version'] ?? '0.0.0';
+            if ($composerContent === false) {
+                return '0.0.0';
+            }
+
+            $composer = json_decode($composerContent, true);
+
+            if (!is_array($composer)) {
+                return '0.0.0';
+            }
+
+            $version = $composer['version'] ?? '0.0.0';
+
+            return is_string($version) ? $version : '0.0.0';
         }
 
         return '0.0.0';
