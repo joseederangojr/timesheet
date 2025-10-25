@@ -26,7 +26,7 @@ final readonly class PasswordController
     ): RedirectResponse {
         $credentials = $request->only(['email', 'password']);
 
-        if (!Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials)) {
             return back()->withErrors([
                 'email' => 'The provided credentials do not match our records.',
             ]);
@@ -45,13 +45,13 @@ final readonly class PasswordController
     private function getGreetingForUser(User $user): string
     {
         if ($this->checkUserIsAdminQuery->handle($user)) {
-            return 'Hello, ' . $user->name;
+            return 'Hello, '.$user->name;
         }
 
         if ($this->checkUserIsEmployeeQuery->handle($user)) {
-            return 'Hi, ' . $user->name;
+            return 'Hi, '.$user->name;
         }
 
-        return 'Welcome, ' . $user->name;
+        return 'Welcome, '.$user->name;
     }
 }

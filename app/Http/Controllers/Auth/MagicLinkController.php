@@ -61,13 +61,13 @@ final readonly class MagicLinkController
     private function getGreetingForUser(User $user): string
     {
         if ($this->checkUserIsAdminQuery->handle($user)) {
-            return 'Hello, ' . $user->name;
+            return 'Hello, '.$user->name;
         }
 
         if ($this->checkUserIsEmployeeQuery->handle($user)) {
-            return 'Hi, ' . $user->name;
+            return 'Hi, '.$user->name;
         }
 
-        return 'Welcome, ' . $user->name;
+        return 'Welcome, '.$user->name;
     }
 }

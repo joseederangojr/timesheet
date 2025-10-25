@@ -29,7 +29,7 @@ final class AppServiceProvider extends ServiceProvider
     private function bootPasswordDefaults(): void
     {
         Password::defaults(
-            fn() => app()->isLocal() || app()->runningUnitTests()
+            fn () => app()->isLocal() || app()->runningUnitTests()
                 ? Password::min(12)->max(255)
                 : Password::min(12)->max(255)->uncompromised(),
         );

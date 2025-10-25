@@ -5,9 +5,9 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn() => Inertia::render('index'))->name('index');
+Route::get('/', fn () => Inertia::render('index'))->name('index');
 
-Route::get('/login', fn() => Inertia::render('auth/Login'))->name('login');
+Route::get('/login', fn () => Inertia::render('auth/Login'))->name('login');
 Route::post('/login/magic-link', [
     App\Http\Controllers\Auth\MagicLinkController::class,
     'sendMagicLink',
@@ -32,7 +32,7 @@ Route::post('/logout', [
 Route::middleware('auth')->group(function (): void {
     Route::get(
         '/dashboard',
-        fn() => Inertia::render('Dashboard', [
+        fn () => Inertia::render('Dashboard', [
             'greeting' => session('greeting'),
         ]),
     )->name('dashboard');

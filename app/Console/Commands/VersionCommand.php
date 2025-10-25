@@ -39,7 +39,7 @@ final class VersionCommand extends Command
     private function showVersion(): int
     {
         $version = $this->getCurrentVersion();
-        $this->info('Current version: ' . $version);
+        $this->info('Current version: '.$version);
 
         return 0;
     }
@@ -49,7 +49,7 @@ final class VersionCommand extends Command
         $type = $this->argument('type');
         $currentVersion = $this->getCurrentVersion();
 
-        if (!preg_match('/^(\d+)\.(\d+)\.(\d+)$/', $currentVersion, $matches)) {
+        if (! preg_match('/^(\d+)\.(\d+)\.(\d+)$/', $currentVersion, $matches)) {
             $this->error('Invalid current version format in composer.json');
 
             return 1;
@@ -58,11 +58,11 @@ final class VersionCommand extends Command
         [$_, $major, $minor, $patch] = $matches;
 
         $newVersion = match ($type) {
-            'major' => $major + 1 . '.0.0',
-            'minor' => $major . '.' . ($minor + 1) . '.0',
-            'patch' => $major . '.' . $minor . '.' . ($patch + 1),
+            'major' => $major + 1 .'.0.0',
+            'minor' => $major.'.'.($minor + 1).'.0',
+            'patch' => $major.'.'.$minor.'.'.($patch + 1),
             default => throw new InvalidArgumentException(
-                'Invalid version type: ' . $type,
+                'Invalid version type: '.$type,
             ),
         };
 
@@ -82,13 +82,13 @@ final class VersionCommand extends Command
     {
         $version = $this->option('ver');
 
-        if (!$version) {
+        if (! $version) {
             $this->error('Please provide a version with --ver option');
 
             return 1;
         }
 
-        if (!preg_match('/^\d+\.\d+\.\d+$/', $version)) {
+        if (! preg_match('/^\d+\.\d+\.\d+$/', $version)) {
             $this->error(
                 'Version must follow semantic versioning format (x.y.z)',
             );
@@ -112,7 +112,7 @@ final class VersionCommand extends Command
             'composer.json',
         );
 
-        if (!File::exists($composerPath)) {
+        if (! File::exists($composerPath)) {
             return '0.0.0';
         }
 
@@ -139,7 +139,7 @@ final class VersionCommand extends Command
             'composer.json',
         );
 
-        if (!File::exists($composerPath)) {
+        if (! File::exists($composerPath)) {
             return;
         }
 
@@ -160,7 +160,7 @@ final class VersionCommand extends Command
                 json_encode(
                     $composer,
                     JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
-                ) . "\n",
+                )."\n",
             );
         } catch (Exception) {
             // Silently fail for invalid JSON - don't update the file

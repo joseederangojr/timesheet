@@ -43,8 +43,8 @@ it('can bump version', function (string $type, string $expected): void {
         ->with(base_path('composer.json'), Mockery::any())
         ->once();
 
-    $this->artisan('version bump ' . $type)
-        ->expectsOutput('Version bumped from 1.0.0 to ' . $expected)
+    $this->artisan('version bump '.$type)
+        ->expectsOutput('Version bumped from 1.0.0 to '.$expected)
         ->assertExitCode(0);
 })->with([
     'patch' => ['patch', '1.0.1'],

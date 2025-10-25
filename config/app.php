@@ -38,7 +38,7 @@ return [
 
             $composer = json_decode($composerContent, true);
 
-            if (!is_array($composer)) {
+            if (! is_array($composer)) {
                 return '0.0.0';
             }
 

@@ -10,7 +10,7 @@ it('shows dashboard for authenticated users', function (): void {
     $this->actingAs($user)
         ->get(route('dashboard'))
         ->assertSuccessful()
-        ->assertInertia(fn($page) => $page->component('Dashboard'));
+        ->assertInertia(fn ($page) => $page->component('Dashboard'));
 });
 
 it('redirects unauthenticated users to login', function (): void {

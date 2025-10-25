@@ -31,8 +31,7 @@ final class MagicLinkRequest extends FormRequest
         return [
             'email.required' => 'Email address is required.',
             'email.email' => 'Please enter a valid email address.',
-            'email.exists' =>
-                "We couldn't find an account with that email address.",
+            'email.exists' => "We couldn't find an account with that email address.",
         ];
     }
 }

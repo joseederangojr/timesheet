@@ -30,7 +30,7 @@ it('shares authenticated user data', function (): void {
     $middleware = new HandleInertiaRequests();
 
     $request = Request::create('/', 'GET');
-    $request->setUserResolver(fn() => $user);
+    $request->setUserResolver(fn () => $user);
 
     $shared = $middleware->share($request);
 

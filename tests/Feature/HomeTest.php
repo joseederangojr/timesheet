@@ -10,13 +10,13 @@ it('shows index page for authenticated users', function (): void {
     $this->actingAs($user)
         ->get('/')
         ->assertSuccessful()
-        ->assertInertia(fn($page) => $page->component('index'));
+        ->assertInertia(fn ($page) => $page->component('index'));
 });
 
 it('shows index page for unauthenticated users', function (): void {
     $this->get('/')
         ->assertSuccessful()
-        ->assertInertia(fn($page) => $page->component('index'));
+        ->assertInertia(fn ($page) => $page->component('index'));
 });
 
 it('returns successful response when accessed directly', function (): void {

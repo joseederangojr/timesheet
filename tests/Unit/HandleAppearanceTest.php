@@ -14,7 +14,7 @@ it('shares system appearance when no cookie is set', function (): void {
 
     $response = $middleware->handle(
         $request,
-        fn(
+        fn (
             $req,
         ): Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response => response(
             'OK',
@@ -35,7 +35,7 @@ it('shares appearance from cookie when set', function (
 
     $response = $middleware->handle(
         $request,
-        fn(
+        fn (
             $req,
         ): Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response => response(
             'OK',

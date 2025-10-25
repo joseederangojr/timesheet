@@ -113,7 +113,7 @@ it('returns 403 for invalid signature magic link', function (): void {
     ]);
 
     // Create an invalid signed URL by accessing the route without proper signature
-    $response = $this->get('/login/magic-link/verify/' . $user->id);
+    $response = $this->get('/login/magic-link/verify/'.$user->id);
 
     $response->assertForbidden();
     $this->assertGuest();
@@ -127,7 +127,7 @@ it('executes abort when signature is invalid', function (): void {
 
     // Use a manually crafted URL with invalid signature to trigger the abort
     $invalidUrl =
-        route('login.magic-link.verify', ['user' => $user->id]) .
+        route('login.magic-link.verify', ['user' => $user->id]).
         '?signature=invalid';
 
     $response = $this->get($invalidUrl);

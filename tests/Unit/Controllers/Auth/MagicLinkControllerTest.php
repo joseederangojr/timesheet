@@ -33,7 +33,7 @@ it(
 
         // This should trigger the abort(403) call on line 50
         expect(
-            fn(): Illuminate\Http\RedirectResponse => $controller->verify(
+            fn (): Illuminate\Http\RedirectResponse => $controller->verify(
                 $request,
                 $user,
             ),

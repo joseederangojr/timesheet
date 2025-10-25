@@ -125,9 +125,9 @@ return [
     'include_helpers' => false,
 
     'helper_files' => [
-        base_path() .
+        base_path().
         '/vendor/laravel/framework/src/Illuminate/Support/helpers.php',
-        base_path() .
+        base_path().
         '/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php',
     ],
 
@@ -291,8 +291,7 @@ return [
     |
     */
     'macro_default_return_types' => [
-        Illuminate\Http\Client\Factory::class =>
-            Illuminate\Http\Client\PendingRequest::class,
+        Illuminate\Http\Client\Factory::class => Illuminate\Http\Client\PendingRequest::class,
     ],
 
     /*
