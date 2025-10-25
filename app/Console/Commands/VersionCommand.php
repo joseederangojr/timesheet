@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use InvalidArgumentException;
+use Throwable;
 
 final class VersionCommand extends Command
 {
@@ -21,9 +22,12 @@ final class VersionCommand extends Command
             'show' => $this->showVersion(),
             'bump' => $this->bumpVersion(),
             'set' => $this->setVersion(),
-            default => (function () use ($action) {
+            default => (function () use ($action): int {
                 $this->error(
-                    "Invalid action: {$action}. Use 'show', 'bump', or 'set'.",
+                    sprintf(
+                        "Invalid action: %s. Use 'show', 'bump', or 'set'.",
+                        $action,
+                    ),
                 );
 
                 return 1;
@@ -34,7 +38,7 @@ final class VersionCommand extends Command
     private function showVersion(): int
     {
         $version = $this->getCurrentVersion();
-        $this->info("Current version: {$version}");
+        $this->info('Current version: ' . $version);
 
         return 0;
     }
@@ -57,12 +61,18 @@ final class VersionCommand extends Command
             'minor' => $major . '.' . ($minor + 1) . '.0',
             'patch' => $major . '.' . $minor . '.' . ($patch + 1),
             default => throw new InvalidArgumentException(
-                "Invalid version type: {$type}",
+                'Invalid version type: ' . $type,
             ),
         };
 
         $this->updateComposerVersion($newVersion);
-        $this->info("Version bumped from {$currentVersion} to {$newVersion}");
+        $this->info(
+            sprintf(
+                'Version bumped from %s to %s',
+                $currentVersion,
+                $newVersion,
+            ),
+        );
 
         return 0;
     }
@@ -87,7 +97,9 @@ final class VersionCommand extends Command
 
         $currentVersion = $this->getCurrentVersion();
         $this->updateComposerVersion($version);
-        $this->info("Version changed from {$currentVersion} to {$version}");
+        $this->info(
+            sprintf('Version changed from %s to %s', $currentVersion, $version),
+        );
 
         return 0;
     }
@@ -95,15 +107,40 @@ final class VersionCommand extends Command
     private function getCurrentVersion(): string
     {
         $composerPath = base_path('composer.json');
-        $composer = json_decode(file_get_contents($composerPath), true);
 
-        return $composer['version'] ?? '0.0.0';
+        try {
+            $composerContent = file_get_contents($composerPath);
+        } catch (Throwable) {
+            return '0.0.0';
+        }
+
+        $composer = json_decode($composerContent, true);
+
+        if (!is_array($composer)) {
+            return '0.0.0';
+        }
+
+        $version = $composer['version'] ?? '0.0.0';
+
+        return is_string($version) ? $version : '0.0.0';
     }
 
     private function updateComposerVersion(string $version): void
     {
         $composerPath = base_path('composer.json');
-        $composer = json_decode(file_get_contents($composerPath), true);
+
+        try {
+            $composerContent = file_get_contents($composerPath);
+        } catch (Throwable) {
+            return;
+        }
+
+        $composer = json_decode($composerContent, true);
+
+        if (!is_array($composer)) {
+            return;
+        }
+
         $composer['version'] = $version;
 
         file_put_contents(
