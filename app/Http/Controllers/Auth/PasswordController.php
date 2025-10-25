@@ -10,14 +10,13 @@ use App\Queries\CheckUserIsAdminQuery;
 use App\Queries\CheckUserIsEmployeeQuery;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 
-final class PasswordController
+final readonly class PasswordController
 {
     public function __construct(
-        private readonly CheckUserIsAdminQuery $checkUserIsAdminQuery,
-        private readonly CheckUserIsEmployeeQuery $checkUserIsEmployeeQuery,
+        private CheckUserIsAdminQuery $checkUserIsAdminQuery,
+        private CheckUserIsEmployeeQuery $checkUserIsEmployeeQuery,
     ) {
         //
     }
@@ -28,29 +27,31 @@ final class PasswordController
         $credentials = $request->only(['email', 'password']);
 
         if (!Auth::attempt($credentials)) {
-            return Redirect::back()->withErrors([
+            return back()->withErrors([
                 'email' => 'The provided credentials do not match our records.',
             ]);
         }
 
         Session::regenerate();
 
+        /** @var User $user */
         $user = Auth::user();
+
         $greeting = $this->getGreetingForUser($user);
 
-        return Redirect::route('dashboard')->with('greeting', $greeting);
+        return to_route('dashboard')->with('greeting', $greeting);
     }
 
     private function getGreetingForUser(User $user): string
     {
         if ($this->checkUserIsAdminQuery->handle($user)) {
-            return "Hello, {$user->name}";
+            return 'Hello, ' . $user->name;
         }
 
         if ($this->checkUserIsEmployeeQuery->handle($user)) {
-            return "Hi, {$user->name}";
+            return 'Hi, ' . $user->name;
         }
 
-        return "Welcome, {$user->name}";
+        return 'Welcome, ' . $user->name;
     }
 }
