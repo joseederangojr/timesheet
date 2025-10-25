@@ -13,9 +13,12 @@ it('shares null user when guest', function (): void {
 
     $shared = $middleware->share($request);
 
-    expect($shared)->toHaveKey('auth')
-        ->and($shared['auth'])->toHaveKey('user')
-        ->and($shared['auth']['user'])->toBeNull();
+    expect($shared)
+        ->toHaveKey('auth')
+        ->and($shared['auth'])
+        ->toHaveKey('user')
+        ->and($shared['auth']['user'])
+        ->toBeNull();
 });
 
 it('shares authenticated user data', function (): void {
@@ -27,14 +30,18 @@ it('shares authenticated user data', function (): void {
     $middleware = new HandleInertiaRequests();
 
     $request = Request::create('/', 'GET');
-    $request->setUserResolver(fn () => $user);
+    $request->setUserResolver(fn() => $user);
 
     $shared = $middleware->share($request);
 
-    expect($shared['auth']['user'])->not->toBeNull()
-        ->and($shared['auth']['user']->id)->toBe($user->id)
-        ->and($shared['auth']['user']->name)->toBe('Test User')
-        ->and($shared['auth']['user']->email)->toBe('test@example.com');
+    expect($shared['auth']['user'])
+        ->not->toBeNull()
+        ->and($shared['auth']['user']->id)
+        ->toBe($user->id)
+        ->and($shared['auth']['user']->name)
+        ->toBe('Test User')
+        ->and($shared['auth']['user']->email)
+        ->toBe('test@example.com');
 });
 
 it('includes parent shared data', function (): void {

@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Sleep;
 use Illuminate\Support\Str;
 
-pest()->extend(Tests\TestCase::class)
+pest()
+    ->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->beforeEach(function (): void {
         Str::createRandomStringsNormally();
@@ -18,6 +19,6 @@ pest()->extend(Tests\TestCase::class)
     })
     ->in('Browser', 'Feature', 'Unit');
 
-expect()->extend('toBeOne', fn () => $this->toBe(1));
+expect()->extend('toBeOne', fn() => $this->toBe(1));
 
 function something(): void {}

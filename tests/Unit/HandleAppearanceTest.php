@@ -12,7 +12,14 @@ it('shares system appearance when no cookie is set', function (): void {
     $middleware = new HandleAppearance();
     $request = Request::create('/', 'GET');
 
-    $response = $middleware->handle($request, fn ($req): Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response => response('OK'));
+    $response = $middleware->handle(
+        $request,
+        fn(
+            $req,
+        ): Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response => response(
+            'OK',
+        ),
+    );
 
     expect($response->getContent())->toBe('OK');
 });
@@ -24,7 +31,14 @@ it('shares appearance from cookie when set', function (): void {
     $request = Request::create('/', 'GET');
     $request->cookies->set('appearance', 'dark');
 
-    $response = $middleware->handle($request, fn ($req): Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response => response('OK'));
+    $response = $middleware->handle(
+        $request,
+        fn(
+            $req,
+        ): Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response => response(
+            'OK',
+        ),
+    );
 
     expect($response->getContent())->toBe('OK');
 });
@@ -36,7 +50,14 @@ it('shares light appearance from cookie', function (): void {
     $request = Request::create('/', 'GET');
     $request->cookies->set('appearance', 'light');
 
-    $response = $middleware->handle($request, fn ($req): Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response => response('OK'));
+    $response = $middleware->handle(
+        $request,
+        fn(
+            $req,
+        ): Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response => response(
+            'OK',
+        ),
+    );
 
     expect($response->getContent())->toBe('OK');
 });
