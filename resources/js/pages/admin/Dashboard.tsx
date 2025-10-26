@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useSidebar } from '@/hooks/use-sidebar';
 import { cn } from '@/lib/utils';
 import { Form, Link } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, Home, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import { ChevronLeft, ChevronRight, Home, LogOut, Users } from 'lucide-react';
 
 interface AdminDashboardProps {
     greeting?: string;
@@ -19,11 +19,7 @@ export default function AdminDashboard({
     greeting,
     auth,
 }: AdminDashboardProps) {
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
-    const toggleSidebar = () => {
-        setSidebarCollapsed(!sidebarCollapsed);
-    };
+    const { sidebarCollapsed, toggleSidebar } = useSidebar();
 
     return (
         <div className="flex min-h-screen bg-background">
@@ -64,6 +60,15 @@ export default function AdminDashboard({
                     >
                         <Home className="h-4 w-4" />
                         {!sidebarCollapsed && <span>Dashboard</span>}
+                    </Link>
+                    <Link
+                        href="/admin/users"
+                        className={cn(
+                            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+                        )}
+                    >
+                        <Users className="h-4 w-4" />
+                        {!sidebarCollapsed && <span>Users</span>}
                     </Link>
                 </nav>
 

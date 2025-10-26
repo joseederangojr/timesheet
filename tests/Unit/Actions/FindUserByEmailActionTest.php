@@ -24,8 +24,9 @@ it('finds user by email successfully', function (): void {
 });
 
 it('throws exception when user email does not exist', function (): void {
-    expect(fn (): User => $this->action->handle('nonexistent@example.com'))
-        ->toThrow(ModelNotFoundException::class);
+    expect(
+        fn (): User => $this->action->handle('nonexistent@example.com'),
+    )->toThrow(ModelNotFoundException::class);
 });
 
 it('returns exact user when multiple users exist', function (): void {

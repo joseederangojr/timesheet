@@ -19,17 +19,20 @@ it('shows admin dashboard for authenticated admin users', function (): void {
     ]);
     $user->roles()->attach($adminRole);
 
-    $response = $this->actingAs($user)->withSession(['greeting' => 'Hello, Admin User'])
+    $response = $this->actingAs($user)
+        ->withSession(['greeting' => 'Hello, Admin User'])
         ->get('/admin/dashboard');
 
     $response->assertOk();
     $response->assertInertia(
-        fn (Inertia\Testing\AssertableInertia $page): Inertia\Testing\AssertableInertia => $page
+        fn (
+            Inertia\Testing\AssertableInertia $page,
+        ): Inertia\Testing\AssertableInertia => $page
             ->component('admin/Dashboard')
             ->has('greeting')
             ->where('greeting', 'Hello, Admin User')
             ->has('auth.user.name')
-            ->where('auth.user.name', 'Admin User')
+            ->where('auth.user.name', 'Admin User'),
     );
 });
 

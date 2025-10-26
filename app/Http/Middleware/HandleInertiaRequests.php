@@ -36,6 +36,10 @@ final class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'metadata' => [
+                'sidebar' => $request->cookie('sidebar') === '1' ? 1 : 0,
+                'theme' => $request->cookie('theme') ?? 'system',
+            ],
         ];
     }
 }

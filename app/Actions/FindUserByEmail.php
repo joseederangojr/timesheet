@@ -10,8 +10,6 @@ final readonly class FindUserByEmail
 {
     public function handle(string $email): User
     {
-        return User::query()
-            ->where('email', $email)
-            ->firstOrFail();
+        return User::query()->where('email', $email)->firstOrFail();
     }
 }

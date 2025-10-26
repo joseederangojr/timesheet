@@ -21,7 +21,10 @@ it('returns admin greeting for admin users', function (): void {
     $checkUserIsAdminQuery = app(CheckUserIsAdminQuery::class);
     $checkUserIsEmployeeQuery = app(CheckUserIsEmployeeQuery::class);
 
-    $query = new GetUserGreetingQuery($checkUserIsAdminQuery, $checkUserIsEmployeeQuery);
+    $query = new GetUserGreetingQuery(
+        $checkUserIsAdminQuery,
+        $checkUserIsEmployeeQuery,
+    );
 
     $greeting = $query->handle($adminUser);
 
@@ -35,7 +38,10 @@ it('returns employee greeting for employee users', function (): void {
     $checkUserIsAdminQuery = app(CheckUserIsAdminQuery::class);
     $checkUserIsEmployeeQuery = app(CheckUserIsEmployeeQuery::class);
 
-    $query = new GetUserGreetingQuery($checkUserIsAdminQuery, $checkUserIsEmployeeQuery);
+    $query = new GetUserGreetingQuery(
+        $checkUserIsAdminQuery,
+        $checkUserIsEmployeeQuery,
+    );
 
     $greeting = $query->handle($employeeUser);
 
@@ -49,7 +55,10 @@ it('returns default greeting for regular users', function (): void {
     $checkUserIsAdminQuery = app(CheckUserIsAdminQuery::class);
     $checkUserIsEmployeeQuery = app(CheckUserIsEmployeeQuery::class);
 
-    $query = new GetUserGreetingQuery($checkUserIsAdminQuery, $checkUserIsEmployeeQuery);
+    $query = new GetUserGreetingQuery(
+        $checkUserIsAdminQuery,
+        $checkUserIsEmployeeQuery,
+    );
 
     $greeting = $query->handle($regularUser);
 

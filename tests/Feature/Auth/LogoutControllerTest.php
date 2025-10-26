@@ -22,5 +22,7 @@ it('logs out authenticated user and redirects to login', function (): void {
 });
 
 it('requires authentication to access logout route', function (): void {
-    $this->delete(route('auth.session.destroy'))->assertRedirect(route('login'));
+    $this->delete(route('auth.session.destroy'))->assertRedirect(
+        route('login'),
+    );
 });

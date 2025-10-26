@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function (): void {
             'greeting' => session('greeting'),
         ]),
     )->name('dashboard');
+
 });
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function (): void {
@@ -51,4 +52,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function ():
             'greeting' => session('greeting'),
         ]),
     )->name('dashboard');
+
+    Route::get('/users', [
+        App\Http\Controllers\Admin\UsersController::class,
+        'index',
+    ])->name('users.index');
 });

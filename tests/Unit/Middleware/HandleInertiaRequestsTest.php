@@ -18,7 +18,13 @@ it('shares null user when guest', function (): void {
         ->and($shared['auth'])
         ->toHaveKey('user')
         ->and($shared['auth']['user'])
-        ->toBeNull();
+        ->toBeNull()
+        ->and($shared)
+        ->toHaveKey('metadata')
+        ->and($shared['metadata']['sidebar'])
+        ->toBe(0)
+        ->and($shared['metadata']['theme'])
+        ->toBe('system');
 });
 
 it('shares authenticated user data', function (): void {
@@ -41,7 +47,13 @@ it('shares authenticated user data', function (): void {
         ->and($shared['auth']['user']->name)
         ->toBe('Test User')
         ->and($shared['auth']['user']->email)
-        ->toBe('test@example.com');
+        ->toBe('test@example.com')
+        ->and($shared)
+        ->toHaveKey('metadata')
+        ->and($shared['metadata']['sidebar'])
+        ->toBe(0)
+        ->and($shared['metadata']['theme'])
+        ->toBe('system');
 });
 
 it('includes parent shared data', function (): void {
@@ -55,6 +67,38 @@ it('includes parent shared data', function (): void {
     expect($shared)->toHaveKey('errors');
 });
 
+it('shares sidebar state from cookie', function (): void {
+    $middleware = new HandleInertiaRequests();
+
+    $request = Request::create('/', 'GET');
+    $request->cookies->set('sidebar', '1');
+
+    $shared = $middleware->share($request);
+
+    expect($shared['metadata']['sidebar'])->toBe(1);
+});
+
+it('defaults sidebar state to false when cookie is missing', function (): void {
+    $middleware = new HandleInertiaRequests();
+
+    $request = Request::create('/', 'GET');
+
+    $shared = $middleware->share($request);
+
+    expect($shared['metadata']['sidebar'])->toBe(0);
+});
+
+it('handles false cookie value correctly', function (): void {
+    $middleware = new HandleInertiaRequests();
+
+    $request = Request::create('/', 'GET');
+    $request->cookies->set('sidebar', '0');
+
+    $shared = $middleware->share($request);
+
+    expect($shared['metadata']['sidebar'])->toBe(0);
+});
+
 it('delegates version to parent', function (): void {
     $middleware = new HandleInertiaRequests();
 
@@ -64,4 +108,50 @@ it('delegates version to parent', function (): void {
 
     // Should return parent version (which is a hash by default)
     expect($version)->toBeString();
+});
+
+it('shares theme state from theme cookie', function (): void {
+    $middleware = new HandleInertiaRequests();
+
+    $request = Request::create('/', 'GET');
+    $request->cookies->set('theme', 'dark');
+
+    $shared = $middleware->share($request);
+
+    expect($shared['metadata']['theme'])->toBe('dark');
+});
+
+it(
+    'defaults theme state to system when theme cookie is missing',
+    function (): void {
+        $middleware = new HandleInertiaRequests();
+
+        $request = Request::create('/', 'GET');
+
+        $shared = $middleware->share($request);
+
+        expect($shared['metadata']['theme'])->toBe('system');
+    },
+);
+
+it('handles light theme from theme cookie', function (): void {
+    $middleware = new HandleInertiaRequests();
+
+    $request = Request::create('/', 'GET');
+    $request->cookies->set('theme', 'light');
+
+    $shared = $middleware->share($request);
+
+    expect($shared['metadata']['theme'])->toBe('light');
+});
+
+it('handles system theme from theme cookie', function (): void {
+    $middleware = new HandleInertiaRequests();
+
+    $request = Request::create('/', 'GET');
+    $request->cookies->set('theme', 'system');
+
+    $shared = $middleware->share($request);
+
+    expect($shared['metadata']['theme'])->toBe('system');
 });
