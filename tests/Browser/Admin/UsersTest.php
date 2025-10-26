@@ -42,8 +42,14 @@ it('displays users in the table', function (): void {
     $role = resolve(FindRoleByNameQuery::class)->handle('admin');
     $admin = User::factory()->hasAttached($role)->create();
 
-    $user1 = User::factory()->create(['name' => 'John Doe', 'email' => 'john@example.com']);
-    $user2 = User::factory()->create(['name' => 'Jane Smith', 'email' => 'jane@example.com']);
+    $user1 = User::factory()->create([
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+    ]);
+    $user2 = User::factory()->create([
+        'name' => 'Jane Smith',
+        'email' => 'jane@example.com',
+    ]);
 
     $this->actingAs($admin);
 
@@ -60,9 +66,18 @@ it('filters users by search term', function (): void {
     $role = resolve(FindRoleByNameQuery::class)->handle('admin');
     $admin = User::factory()->hasAttached($role)->create();
 
-    $user1 = User::factory()->create(['name' => 'John Doe', 'email' => 'john@example.com']);
-    $user2 = User::factory()->create(['name' => 'Jane Smith', 'email' => 'jane@example.com']);
-    $user3 = User::factory()->create(['name' => 'Bob Johnson', 'email' => 'bob@example.com']);
+    $user1 = User::factory()->create([
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+    ]);
+    $user2 = User::factory()->create([
+        'name' => 'Jane Smith',
+        'email' => 'jane@example.com',
+    ]);
+    $user3 = User::factory()->create([
+        'name' => 'Bob Johnson',
+        'email' => 'bob@example.com',
+    ]);
 
     $this->actingAs($admin);
 
@@ -104,6 +119,48 @@ it('shows verification filter options', function (): void {
     $page->assertSee('Verified');
 });
 
+it('filters users by role via URL', function (): void {
+    $adminRole = resolve(FindRoleByNameQuery::class)->handle('admin');
+    $employeeRole = resolve(FindRoleByNameQuery::class)->handle('employee');
+
+    $adminUser = User::factory()
+        ->hasAttached($adminRole)
+        ->create(['name' => 'Admin User']);
+    $employeeUser = User::factory()
+        ->hasAttached($employeeRole)
+        ->create(['name' => 'Employee User']);
+    $noRoleUser = User::factory()->create(['name' => 'No Role User']);
+
+    $this->actingAs($adminUser);
+
+    $page = visit('/admin/users?role=admin');
+
+    $page
+        ->assertSee('Admin User')
+        ->assertDontSee('Employee User')
+        ->assertDontSee('No Role User');
+});
+
+it('filters users by verification status via URL', function (): void {
+    $role = resolve(FindRoleByNameQuery::class)->handle('admin');
+    $admin = User::factory()->hasAttached($role)->create();
+
+    $verifiedUser = User::factory()->create([
+        'name' => 'Verified User',
+        'email_verified_at' => now(),
+    ]);
+    $unverifiedUser = User::factory()->create([
+        'name' => 'Unverified User',
+        'email_verified_at' => null,
+    ]);
+
+    $this->actingAs($admin);
+
+    $page = visit('/admin/users?verified=verified');
+
+    $page->assertSee('Verified User')->assertDontSee('Unverified User');
+});
+
 it('sorts users by name', function (): void {
     $role = resolve(FindRoleByNameQuery::class)->handle('admin');
     $admin = User::factory()->hasAttached($role)->create();
@@ -120,7 +177,8 @@ it('sorts users by name', function (): void {
     $page->click('User');
 
     // Should show the users (sorting may take effect)
-    $page->assertSee('Alice Brown')
+    $page
+        ->assertSee('Alice Brown')
         ->assertSee('Bob Smith')
         ->assertSee('Charlie Wilson');
 });
@@ -140,16 +198,19 @@ it('paginates users', function (): void {
     $page->assertSee('Rows per page');
 
     // Should show pagination info
-    $page->assertSee('Page 1 of')
-        ->assertSee('Rows per page');
+    $page->assertSee('Page 1 of')->assertSee('Rows per page');
 });
 
 it('shows user roles in badges', function (): void {
     $adminRole = resolve(FindRoleByNameQuery::class)->handle('admin');
     $employeeRole = resolve(FindRoleByNameQuery::class)->handle('employee');
 
-    $adminUser = User::factory()->hasAttached($adminRole)->create(['name' => 'Admin User']);
-    $employeeUser = User::factory()->hasAttached($employeeRole)->create(['name' => 'Employee User']);
+    $adminUser = User::factory()
+        ->hasAttached($adminRole)
+        ->create(['name' => 'Admin User']);
+    $employeeUser = User::factory()
+        ->hasAttached($employeeRole)
+        ->create(['name' => 'Employee User']);
     $noRoleUser = User::factory()->create(['name' => 'No Role User']);
 
     $this->actingAs($adminUser);
@@ -179,9 +240,7 @@ it('shows verification status badges', function (): void {
 
     $page = visit('/admin/users');
 
-    $page
-        ->assertSee('Verified')
-        ->assertSee('Unverified');
+    $page->assertSee('Verified')->assertSee('Unverified');
 });
 
 it('displays joined date formatted', function (): void {
