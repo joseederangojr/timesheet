@@ -17,7 +17,7 @@ final readonly class UsersController
     {
         $users = $this->getUsersQuery->handle($request);
 
-        return Inertia::render('admin/Users/Index', [
+        return Inertia::render('admin/users/index', [
             'users' => $users,
             'filters' => $request->only(['search']),
         ]);

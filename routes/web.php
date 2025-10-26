@@ -7,7 +7,7 @@ use Inertia\Inertia;
 
 Route::get('/', fn () => Inertia::render('index'))->name('index');
 
-Route::get('/login', fn () => Inertia::render('auth/Login'))->name('login');
+Route::get('/login', fn () => Inertia::render('auth/login'))->name('login');
 
 Route::prefix('auth')->name('auth.')->group(function (): void {
     Route::post('/magic-link', [
@@ -38,7 +38,7 @@ Route::prefix('auth')->name('auth.')->group(function (): void {
 Route::middleware('auth')->group(function (): void {
     Route::get(
         '/dashboard',
-        fn () => Inertia::render('Dashboard', [
+        fn () => Inertia::render('dashboard', [
             'greeting' => session('greeting'),
         ]),
     )->name('dashboard');
@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function (): void {
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function (): void {
     Route::get(
         '/dashboard',
-        fn () => Inertia::render('admin/Dashboard', [
+        fn () => Inertia::render('admin/dashboard', [
             'greeting' => session('greeting'),
         ]),
     )->name('dashboard');

@@ -26,7 +26,7 @@ describe('Admin Users Controller', function (): void {
 
             expect($response)->assertSuccessful()->assertInertia(
                 fn ($page) => $page
-                    ->component('admin/Users/Index')
+                    ->component('admin/users/index')
                     ->has('users.data', 6) // 5 created + 1 admin
                     ->has('filters'),
             );
@@ -50,7 +50,7 @@ describe('Admin Users Controller', function (): void {
                 ->assertSuccessful()
                 ->assertInertia(
                     fn ($page) => $page
-                        ->component('admin/Users/Index')
+                        ->component('admin/users/index')
                         ->where('filters.search', 'Johnathan')
                         ->has('users.data', 1)
                         ->where('users.data.0.name', 'Johnathan Unique'),
@@ -71,7 +71,7 @@ describe('Admin Users Controller', function (): void {
                 ->assertSuccessful()
                 ->assertInertia(
                     fn ($page) => $page
-                        ->component('admin/Users/Index')
+                        ->component('admin/users/index')
                         ->where('filters.search', 'unique@testing')
                         ->has('users.data', 1)
                         ->where('users.data.0.email', 'unique@testing.com'),
@@ -85,7 +85,7 @@ describe('Admin Users Controller', function (): void {
 
             expect($response)->assertSuccessful()->assertInertia(
                 fn ($page) => $page
-                    ->component('admin/Users/Index')
+                    ->component('admin/users/index')
                     ->has('users.data', 15) // Default pagination is 15
                     ->where('users.current_page', 1)
                     ->where('users.per_page', 15)
@@ -104,7 +104,7 @@ describe('Admin Users Controller', function (): void {
                 ->assertSuccessful()
                 ->assertInertia(
                     fn ($page) => $page
-                        ->component('admin/Users/Index')
+                        ->component('admin/users/index')
                         ->has(
                             'users.data.1.roles.0',
                             fn ($roleData) => $roleData

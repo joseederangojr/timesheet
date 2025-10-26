@@ -28,7 +28,7 @@ it('shows admin dashboard for authenticated admin users', function (): void {
         fn (
             Inertia\Testing\AssertableInertia $page,
         ): Inertia\Testing\AssertableInertia => $page
-            ->component('admin/Dashboard')
+            ->component('admin/dashboard')
             ->has('greeting')
             ->where('greeting', 'Hello, Admin User')
             ->has('auth.user.name')
