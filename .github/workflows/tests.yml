@@ -9,70 +9,9 @@ on:
       - main
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    outputs:
-      composer-cache-hit: ${{ steps.composer-cache.outputs.cache-hit }}
-      npm-cache-hit: ${{ steps.npm-cache.outputs.cache-hit }}
-      playwright-version: ${{ steps.playwright-version.outputs.version }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.4
-          tools: composer:v2
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Get Composer Cache Directory
-        id: composer-cache-dir
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache Composer Dependencies
-        id: composer-cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
-      - name: Cache npm Dependencies
-        id: npm-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
-      - name: Install Dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
-
-      - name: Install Node Dependencies
-        run: npm ci
-
-      - name: Get Playwright version
-        id: playwright-version
-        run: echo "version=$(npm list playwright --depth=0 --json | jq -r '.dependencies.playwright.version // .devDependencies.playwright.version')" >> $GITHUB_OUTPUT
-
   tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: setup
-    strategy:
-      fail-fast: false
-      matrix:
-        test-suite: [unit, feature, browser]
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -95,7 +34,7 @@ jobs:
         id: composer-cache-dir
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Restore Composer Dependencies
+      - name: Cache Composer Dependencies
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache-dir.outputs.dir }}
@@ -103,7 +42,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      - name: Restore npm Dependencies
+      - name: Cache npm Dependencies
         uses: actions/cache@v4
         with:
           path: ~/.npm
@@ -130,22 +69,25 @@ jobs:
       - name: Build Assets
         run: npm run build
 
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(npm list playwright --depth=0 --json | jq -r '.dependencies.playwright.version // .devDependencies.playwright.version')" >> $GITHUB_OUTPUT
+
       - name: Cache Playwright Browsers
-        if: matrix.test-suite == 'browser'
         uses: actions/cache@v4
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ needs.setup.outputs.playwright-version }}
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
       - name: Install Playwright Browsers
-        if: matrix.test-suite == 'browser' && steps.playwright-cache.outputs.cache-hit != 'true'
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
 
       - name: Install Playwright System Dependencies
-        if: matrix.test-suite == 'browser' && steps.playwright-cache.outputs.cache-hit == 'true'
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps
 
       - name: Cache Rector
@@ -183,95 +125,6 @@ jobs:
           php artisan route:cache
           php artisan view:cache
 
-      - name: Run Unit Tests
-        if: matrix.test-suite == 'unit'
-        run: php artisan test tests/Unit
-
-      - name: Run Feature Tests
-        if: matrix.test-suite == 'feature'
-        run: php artisan test tests/Feature
-
-      - name: Run Browser Tests
-        if: matrix.test-suite == 'browser'
-        run: php artisan test tests/Browser
-
-      - name: Store Browser Screenshots
-        if: matrix.test-suite == 'browser' && (success() || failure())
-        uses: actions/upload-artifact@v4
-        with:
-          name: browser-screenshots-${{ github.run_id }}
-          path: |
-            tests/Browser/Screenshots
-          retention-days: 3
-
-  lint-and-static-analysis:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: setup
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.4
-          tools: composer:v2
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Get Composer Cache Directory
-        id: composer-cache-dir
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Restore Composer Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
-      - name: Restore npm Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
-      - name: Install Dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
-
-      - name: Install Node Dependencies
-        run: npm ci
-
-      - name: Cache Rector
-        uses: actions/cache@v4
-        with:
-          path: /tmp/rector
-          key: ${{ runner.os }}-rector-${{ hashFiles('**/composer.lock', 'rector.php') }}
-          restore-keys: |
-            ${{ runner.os }}-rector-
-
-      - name: Cache PHPStan
-        uses: actions/cache@v4
-        with:
-          path: /tmp/phpstan
-          key: ${{ runner.os }}-phpstan-${{ hashFiles('**/composer.lock', 'phpstan.neon') }}
-          restore-keys: |
-            ${{ runner.os }}-phpstan-
-
-      - name: Create cache directories
-        run: |
-          mkdir -p /tmp/rector
-          mkdir -p /tmp/phpstan
-
       - name: Run Linting and Static Analysis
         run: |
           npm run format:php
@@ -281,3 +134,15 @@ jobs:
           ./vendor/bin/phpstan --memory-limit=2G
           npm run lint
           npm run test:types
+
+      - name: Run All Tests
+        run: php artisan test
+
+      - name: Store Browser Screenshots
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-screenshots-${{ github.run_id }}
+          path: |
+            tests/Browser/Screenshots
+          retention-days: 3
