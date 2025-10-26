@@ -53,14 +53,12 @@ it('can toggle back to magic link mode', function (): void {
 it('can send magic link for existing user', function (): void {
     Notification::fake();
 
-    $user = User::factory()->create([
-        'email' => 'test@example.com',
-        'name' => 'Test User',
-    ]);
+    $user = User::factory()->create();
 
-    $page = visit('/login');
-
-    $page->fill('email', 'test@example.com')->click('Send Magic Link');
+    $page = visit('/login')
+        ->click('Sign In with Magic Link')
+        ->fill('email', $user->email)
+        ->click('Send Magic Link');
 
     Notification::assertSentTo($user, MagicLinkNotification::class);
 });

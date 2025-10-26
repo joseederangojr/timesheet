@@ -69,6 +69,9 @@ jobs:
       - name: Build Assets
         run: npm run build
 
+      - name: Install Playwright System Dependencies
+        run: npx playwright install-deps
+
       - name: Get Playwright version
         id: playwright-version
         run: echo "version=$(npm list playwright --depth=0 --json | jq -r '.dependencies.playwright.version // .devDependencies.playwright.version')" >> $GITHUB_OUTPUT
@@ -84,11 +87,7 @@ jobs:
 
       - name: Install Playwright Browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps
-
-      - name: Install Playwright System Dependencies
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps
+        run: npx playwright install
 
       - name: Cache Rector
         uses: actions/cache@v4
