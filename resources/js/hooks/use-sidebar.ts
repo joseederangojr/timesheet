@@ -1,6 +1,6 @@
 import { setCookie } from '@/lib/cookies';
 import { usePage } from '@inertiajs/react';
-import { useCallback, useState } from 'react';
+import * as React from 'react';
 
 interface SharedProps {
     metadata: {
@@ -11,18 +11,18 @@ interface SharedProps {
 
 export function useSidebar() {
     const { props } = usePage<SharedProps>();
-    const [sidebarCollapsed, setSidebarCollapsedState] = useState(
+    const [sidebarCollapsed, setSidebarCollapsedState] = React.useState(
         props.metadata.sidebar === 1,
     );
 
-    const setSidebarCollapsed = useCallback((collapsed: boolean) => {
+    const setSidebarCollapsed = (collapsed: boolean) => {
         setSidebarCollapsedState(collapsed);
         setCookie('sidebar', collapsed ? '1' : '0');
-    }, []);
+    };
 
-    const toggleSidebar = useCallback(() => {
+    const toggleSidebar = () => {
         setSidebarCollapsed(!sidebarCollapsed);
-    }, [sidebarCollapsed, setSidebarCollapsed]);
+    };
 
     return {
         sidebarCollapsed,

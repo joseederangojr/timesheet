@@ -1,65 +1,74 @@
-import { cn } from '@/lib/utils';
-import { AlertCircle, CheckCircle, Info, XCircle } from 'lucide-react';
-import { type ReactNode } from 'react';
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 
-type AlertVariant = 'default' | 'success' | 'warning' | 'error';
+import { cn } from "@/lib/utils"
 
-interface AlertProps {
-    variant?: AlertVariant;
-    children: ReactNode;
-    className?: string;
+const alertVariants = cva(
+  "relative w-full rounded-lg border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  {
+    variants: {
+      variant: {
+        default: "bg-card text-card-foreground",
+        destructive:
+          "text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+function Alert({
+  className,
+  variant,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) {
+  return (
+    <div
+      data-slot="alert"
+      role="alert"
+      className={cn(alertVariants({ variant }), className)}
+      {...props}
+    />
+  )
 }
 
-const alertVariants = {
-    default: {
-        container: 'bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400',
-        icon: Info,
-    },
-    success: {
-        container: 'bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-400',
-        icon: CheckCircle,
-    },
-    warning: {
-        container: 'bg-yellow-50 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
-        icon: AlertCircle,
-    },
-    error: {
-        container: 'bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-400',
-        icon: XCircle,
-    },
-};
-
-export function Alert({ 
-    variant = 'default', 
-    children, 
-    className 
-}: AlertProps) {
-    const { container, icon: Icon } = alertVariants[variant];
-
-    return (
-        <div className={cn('rounded-md p-4 text-sm', container, className)}>
-            <div className="flex items-start gap-3">
-                <Icon className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">{children}</div>
-            </div>
-        </div>
-    );
+function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="alert-title"
+      className={cn(
+        "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight",
+        className
+      )}
+      {...props}
+    />
+  )
 }
 
-interface MessageAlertProps {
-    message: string;
-    variant?: AlertVariant;
-    className?: string;
+function AlertDescription({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="alert-description"
+      className={cn(
+        "text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed",
+        className
+      )}
+      {...props}
+    />
+  )
 }
 
-export function MessageAlert({ 
-    message, 
-    variant = 'success', 
-    className 
-}: MessageAlertProps) {
-    return (
-        <Alert variant={variant} className={className}>
-            {message}
-        </Alert>
-    );
+function MessageAlert({ message }: { message: string }) {
+  return (
+    <Alert>
+      <AlertDescription>{message}</AlertDescription>
+    </Alert>
+  )
 }
+
+export { Alert, AlertTitle, AlertDescription, MessageAlert }
