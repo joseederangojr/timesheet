@@ -31,3 +31,5 @@ yarn-error.log
 _ide_helper*.php
 coverage*/*
 .opencode
+commit.sh
+COMMIT.md

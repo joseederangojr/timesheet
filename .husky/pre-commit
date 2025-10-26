@@ -1,4 +1,5 @@
 composer update
 npm install
 composer test
-git add -u
+git add composer.lock package-lock.json
+git diff --cached --name-only | xargs git add
