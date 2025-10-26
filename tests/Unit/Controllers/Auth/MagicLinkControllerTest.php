@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Actions\FindUserByEmail;
 use App\Http\Controllers\Auth\MagicLinkController;
 use App\Models\User;
 use App\Queries\CheckUserIsAdminQuery;
@@ -18,10 +19,12 @@ beforeEach(function (): void {
 it(
     'throws 403 exception when signature is invalid in show method',
     function (): void {
+        $findUserByEmailAction = app(FindUserByEmail::class);
         $checkUserIsAdminQuery = app(CheckUserIsAdminQuery::class);
         $getUserGreetingQuery = app(App\Queries\GetUserGreetingQuery::class);
 
         $controller = new MagicLinkController(
+            $findUserByEmailAction,
             $checkUserIsAdminQuery,
             $getUserGreetingQuery,
         );

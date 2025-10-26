@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\FindUserByEmail;
 use App\Http\Requests\Auth\MagicLinkRequest;
 use App\Models\User;
 use App\Notifications\Auth\MagicLinkNotification;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\URL;
 final readonly class MagicLinkController
 {
     public function __construct(
+        private FindUserByEmail $findUserByEmailAction,
         private CheckUserIsAdminQuery $checkUserIsAdminQuery,
         private GetUserGreetingQuery $getUserGreetingQuery,
     ) {
@@ -25,9 +27,10 @@ final readonly class MagicLinkController
 
     public function store(MagicLinkRequest $request): RedirectResponse
     {
-        $user = User::query()
-            ->where('email', $request->validated('email'))
-            ->firstOrFail();
+        $validated = $request->validated();
+        /** @var string $email */
+        $email = $validated['email'];
+        $user = $this->findUserByEmailAction->handle($email);
 
         $magicLinkUrl = URL::temporarySignedRoute(
             'auth.magic-link.show',
