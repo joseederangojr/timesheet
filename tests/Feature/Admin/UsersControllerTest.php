@@ -113,5 +113,122 @@ describe('Admin Users Controller', function (): void {
                         ),
                 );
         });
+
+        it('can sort users by name ascending', function (): void {
+            $userZ = User::factory()->create(['name' => 'Zoe Last']);
+            $userA = User::factory()->create(['name' => 'Alice First']);
+
+            $response = $this->actingAs($this->admin)->get(
+                '/admin/users?sort_by=name&sort_direction=asc',
+            );
+
+            expect($response)->assertSuccessful()->assertInertia(
+                fn ($page) => $page
+                    ->component('admin/users/index')
+                    ->where('filters.sort_by', 'name')
+                    ->where('filters.sort_direction', 'asc')
+                    ->has('users.data', 3) // admin + 2 created
+                    ->where('users.data.0.name', 'Alice First'),
+            );
+        });
+
+        it('can sort users by name descending', function (): void {
+            $userZ = User::factory()->create(['name' => 'Zoe Last']);
+            $userA = User::factory()->create(['name' => 'Alice First']);
+
+            $response = $this->actingAs($this->admin)->get(
+                '/admin/users?sort_by=name&sort_direction=desc',
+            );
+
+            expect($response)->assertSuccessful()->assertInertia(
+                fn ($page) => $page
+                    ->component('admin/users/index')
+                    ->where('filters.sort_by', 'name')
+                    ->where('filters.sort_direction', 'desc')
+                    ->has('users.data', 3) // admin + 2 created
+                    ->where('users.data.0.name', 'Zoe Last'),
+            );
+        });
+
+        it('can sort users by email', function (): void {
+            $userZ = User::factory()->create(['email' => 'z@example.com']);
+            $userA = User::factory()->create(['email' => 'a@example.com']);
+
+            $response = $this->actingAs($this->admin)->get(
+                '/admin/users?sort_by=email&sort_direction=asc',
+            );
+
+            expect($response)->assertSuccessful()->assertInertia(
+                fn ($page) => $page
+                    ->component('admin/users/index')
+                    ->where('filters.sort_by', 'email')
+                    ->where('filters.sort_direction', 'asc')
+                    ->has('users.data', 3) // admin + 2 created
+                    ->where('users.data.0.email', 'a@example.com'),
+            );
+        });
+
+        it('can sort users by creation date', function (): void {
+            $oldUser = User::factory()->create();
+            $oldUser->created_at = now()->subDays(2);
+            $oldUser->save();
+
+            $newUser = User::factory()->create();
+            $newUser->created_at = now()->subDay();
+            $newUser->save();
+
+            $response = $this->actingAs($this->admin)->get(
+                '/admin/users?sort_by=created_at&sort_direction=asc',
+            );
+
+            expect($response)->assertSuccessful()->assertInertia(
+                fn ($page) => $page
+                    ->component('admin/users/index')
+                    ->where('filters.sort_by', 'created_at')
+                    ->where('filters.sort_direction', 'asc')
+                    ->has('users.data', 3) // admin + 2 created
+                    ->where('users.data.0.id', $oldUser->id),
+            );
+        });
+
+        it(
+            'defaults to sorting by created_at desc when invalid sort field provided',
+            function (): void {
+                User::factory(2)->create();
+
+                $response = $this->actingAs($this->admin)->get(
+                    '/admin/users?sort_by=invalid_field&sort_direction=asc',
+                );
+
+                expect($response)
+                    ->assertSuccessful()
+                    ->assertInertia(
+                        fn ($page) => $page
+                            ->component('admin/users/index')
+                            ->where('filters.sort_by', 'invalid_field')
+                            ->where('filters.sort_direction', 'asc'),
+                    );
+            },
+        );
+
+        it(
+            'defaults to desc direction when invalid direction provided',
+            function (): void {
+                User::factory(2)->create();
+
+                $response = $this->actingAs($this->admin)->get(
+                    '/admin/users?sort_by=name&sort_direction=invalid',
+                );
+
+                expect($response)
+                    ->assertSuccessful()
+                    ->assertInertia(
+                        fn ($page) => $page
+                            ->component('admin/users/index')
+                            ->where('filters.sort_by', 'name')
+                            ->where('filters.sort_direction', 'invalid'),
+                    );
+            },
+        );
     });
 });

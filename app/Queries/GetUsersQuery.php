@@ -4,30 +4,43 @@ declare(strict_types=1);
 
 namespace App\Queries;
 
+use App\DTOs\UserFilters;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 
 final readonly class GetUsersQuery
 {
     /**
      * @return LengthAwarePaginator<int, User>
      */
-    public function handle(Request $request): LengthAwarePaginator
+    public function handle(UserFilters $filters): LengthAwarePaginator
     {
+        // Validate sort parameters
+        $allowedSortFields = [
+            'name',
+            'email',
+            'created_at',
+            'email_verified_at',
+        ];
+        $sortBy = in_array($filters->sortBy, $allowedSortFields)
+            ? $filters->sortBy
+            : 'created_at';
+        $sortDirection = in_array($filters->sortDirection, ['asc', 'desc'])
+            ? $filters->sortDirection
+            : 'desc';
+
         return User::query()
             ->with('roles')
-            ->when($request->get('search'), function (
+            ->when($filters->search, function (
                 Builder $query,
-                mixed $search,
+                string $search,
             ): void {
-                $searchTerm = is_string($search) ? $search : '';
                 $query
-                    ->where('name', 'like', sprintf('%%%s%%', $searchTerm))
-                    ->orWhere('email', 'like', sprintf('%%%s%%', $searchTerm));
+                    ->where('name', 'like', sprintf('%%%s%%', $search))
+                    ->orWhere('email', 'like', sprintf('%%%s%%', $search));
             })
-            ->latest()
+            ->orderBy($sortBy, $sortDirection)
             ->paginate(15)
             ->withQueryString();
     }

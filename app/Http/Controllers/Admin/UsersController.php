@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTOs\UserFilters;
 use App\Queries\GetUsersQuery;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,11 +16,16 @@ final readonly class UsersController
 
     public function index(Request $request): Response
     {
-        $users = $this->getUsersQuery->handle($request);
+        $filters = UserFilters::fromRequest($request);
+        $users = $this->getUsersQuery->handle($filters);
 
         return Inertia::render('admin/users/index', [
             'users' => $users,
-            'filters' => $request->only(['search']),
+            'filters' => $request->only([
+                'search',
+                'sort_by',
+                'sort_direction',
+            ]),
         ]);
     }
 }

@@ -11,7 +11,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { router } from '@inertiajs/react';
-import { Search } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown, Search } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
 interface User {
@@ -82,9 +82,53 @@ export function UserSearch({
 interface UserTableProps {
     users: PaginatedUsers;
     hasSearchFilter: boolean;
+    sortBy?: string;
+    sortDirection?: 'asc' | 'desc';
+    onSort?: (field: string) => void;
 }
 
-export function UserTable({ users, hasSearchFilter }: UserTableProps) {
+interface SortableTableHeadProps {
+    field: string;
+    label: string;
+    sortBy?: string;
+    sortDirection?: 'asc' | 'desc';
+    onSort?: (field: string) => void;
+}
+
+function SortableTableHead({
+    field,
+    label,
+    sortBy,
+    sortDirection,
+    onSort,
+}: SortableTableHeadProps) {
+    const isActive = sortBy === field;
+    const Icon = isActive
+        ? sortDirection === 'asc'
+            ? ArrowUp
+            : ArrowDown
+        : ArrowUpDown;
+
+    return (
+        <Button
+            variant="ghost"
+            size="sm"
+            className="h-auto p-0 font-medium hover:bg-transparent"
+            onClick={() => onSort?.(field)}
+        >
+            {label}
+            <Icon className="ml-2 h-4 w-4" />
+        </Button>
+    );
+}
+
+export function UserTable({
+    users,
+    hasSearchFilter,
+    sortBy,
+    sortDirection,
+    onSort,
+}: UserTableProps) {
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -111,11 +155,43 @@ export function UserTable({ users, hasSearchFilter }: UserTableProps) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>User</TableHead>
-                            <TableHead>Email</TableHead>
+                            <TableHead>
+                                <SortableTableHead
+                                    field="name"
+                                    label="User"
+                                    sortBy={sortBy}
+                                    sortDirection={sortDirection}
+                                    onSort={onSort}
+                                />
+                            </TableHead>
+                            <TableHead>
+                                <SortableTableHead
+                                    field="email"
+                                    label="Email"
+                                    sortBy={sortBy}
+                                    sortDirection={sortDirection}
+                                    onSort={onSort}
+                                />
+                            </TableHead>
                             <TableHead>Roles</TableHead>
-                            <TableHead>Verified</TableHead>
-                            <TableHead>Joined</TableHead>
+                            <TableHead>
+                                <SortableTableHead
+                                    field="email_verified_at"
+                                    label="Verified"
+                                    sortBy={sortBy}
+                                    sortDirection={sortDirection}
+                                    onSort={onSort}
+                                />
+                            </TableHead>
+                            <TableHead>
+                                <SortableTableHead
+                                    field="created_at"
+                                    label="Joined"
+                                    sortBy={sortBy}
+                                    sortDirection={sortDirection}
+                                    onSort={onSort}
+                                />
+                            </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -300,5 +376,52 @@ export function useUserSearch({ initialSearch = '' }: UseUserSearchProps = {}) {
         searchTerm,
         setSearchTerm,
         clearSearch,
+    };
+}
+
+interface UseUserSortProps {
+    initialSortBy?: string;
+    initialSortDirection?: 'asc' | 'desc';
+    currentSearch?: string;
+}
+
+export function useUserSort({
+    initialSortBy = 'created_at',
+    initialSortDirection = 'desc',
+    currentSearch,
+}: UseUserSortProps = {}) {
+    const [sortBy, setSortBy] = useState(initialSortBy);
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(
+        initialSortDirection,
+    );
+
+    const handleSort = useCallback(
+        (field: string) => {
+            const newDirection =
+                sortBy === field && sortDirection === 'asc' ? 'desc' : 'asc';
+            setSortBy(field);
+            setSortDirection(newDirection);
+
+            const params: Record<string, string> = {
+                sort_by: field,
+                sort_direction: newDirection,
+            };
+
+            if (currentSearch) {
+                params.search = currentSearch;
+            }
+
+            router.get('/admin/users', params, {
+                preserveState: true,
+                replace: true,
+            });
+        },
+        [sortBy, sortDirection, currentSearch],
+    );
+
+    return {
+        sortBy,
+        sortDirection,
+        handleSort,
     };
 }

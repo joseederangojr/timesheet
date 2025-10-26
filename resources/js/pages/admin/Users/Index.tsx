@@ -2,6 +2,7 @@ import {
     UserSearch,
     UserTable,
     useUserSearch,
+    useUserSort,
 } from '@/components/features/user-management';
 import { AdminLayout } from '@/components/layouts/admin-layout';
 import { AuthProvider } from '@/contexts/auth-context';
@@ -38,6 +39,8 @@ interface AdminUsersIndexProps {
     users: PaginatedUsers;
     filters: {
         search?: string;
+        sort_by?: string;
+        sort_direction?: 'asc' | 'desc';
     };
     auth: {
         user: {
@@ -54,6 +57,12 @@ export default function AdminUsersIndex({
 }: AdminUsersIndexProps) {
     const { searchTerm, setSearchTerm, clearSearch } = useUserSearch({
         initialSearch: filters.search,
+    });
+
+    const { sortBy, sortDirection, handleSort } = useUserSort({
+        initialSortBy: filters.sort_by,
+        initialSortDirection: filters.sort_direction,
+        currentSearch: searchTerm,
     });
 
     return (
@@ -76,6 +85,9 @@ export default function AdminUsersIndex({
                     <UserTable
                         users={users}
                         hasSearchFilter={!!filters.search}
+                        sortBy={sortBy}
+                        sortDirection={sortDirection}
+                        onSort={handleSort}
                     />
                 </AdminLayout>
             </SidebarProvider>

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\DTOs\UserFilters;
 use App\Models\Role;
 use App\Models\User;
 use App\Queries\GetUsersQuery;
-use Illuminate\Http\Request;
 
 describe('GetUsersQuery', function (): void {
     beforeEach(function (): void {
@@ -21,8 +21,8 @@ describe('GetUsersQuery', function (): void {
                 $user->roles()->attach($role);
             }
 
-            $request = new Request();
-            $result = $this->query->handle($request);
+            $filters = new UserFilters();
+            $result = $this->query->handle($filters);
 
             expect($result)
                 ->toBeInstanceOf(
@@ -41,8 +41,8 @@ describe('GetUsersQuery', function (): void {
             $jane = User::factory()->create(['name' => 'Jane Smith']);
             $bob = User::factory()->create(['name' => 'Bob Johnson']);
 
-            $request = new Request(['search' => 'John']);
-            $result = $this->query->handle($request);
+            $filters = new UserFilters(search: 'John');
+            $result = $this->query->handle($filters);
 
             expect($result->count())->toBe(2); // John Doe + Bob Johnson (contains "John")
 
@@ -60,8 +60,8 @@ describe('GetUsersQuery', function (): void {
             $user2 = User::factory()->create(['email' => 'demo@example.com']);
             $user3 = User::factory()->create(['email' => 'user@other.com']);
 
-            $request = new Request(['search' => 'example']);
-            $result = $this->query->handle($request);
+            $filters = new UserFilters(search: 'example');
+            $result = $this->query->handle($filters);
 
             expect($result->count())->toBe(2); // test@example.com + demo@example.com
 
@@ -83,8 +83,8 @@ describe('GetUsersQuery', function (): void {
             ]);
             $thirdUser = User::factory()->create(['created_at' => now()]);
 
-            $request = new Request();
-            $result = $this->query->handle($request);
+            $filters = new UserFilters();
+            $result = $this->query->handle($filters);
 
             expect($result->first()->id)
                 ->toBe($thirdUser->id)
@@ -97,8 +97,8 @@ describe('GetUsersQuery', function (): void {
             function (): void {
                 User::factory(3)->create();
 
-                $request = new Request(['search' => 'nonexistent']);
-                $result = $this->query->handle($request);
+                $filters = new UserFilters(search: 'nonexistent');
+                $result = $this->query->handle($filters);
 
                 expect($result->count())
                     ->toBe(0)
@@ -110,8 +110,8 @@ describe('GetUsersQuery', function (): void {
         it('handles pagination with multiple pages', function (): void {
             User::factory(20)->create();
 
-            $request = new Request();
-            $result = $this->query->handle($request);
+            $filters = new UserFilters();
+            $result = $this->query->handle($filters);
 
             expect($result->hasPages())
                 ->toBeTrue()
@@ -124,8 +124,8 @@ describe('GetUsersQuery', function (): void {
         it('paginates results with 15 items per page', function (): void {
             User::factory(20)->create();
 
-            $request = new Request();
-            $result = $this->query->handle($request);
+            $filters = new UserFilters();
+            $result = $this->query->handle($filters);
 
             expect($result->perPage())
                 ->toBe(15)
@@ -135,22 +135,12 @@ describe('GetUsersQuery', function (): void {
                 ->toBe(20);
         });
 
-        it('handles non-string search parameter', function (): void {
-            User::factory()->create(['name' => 'John Doe']);
-            User::factory()->create(['name' => 'Jane Smith']);
-
-            $request = new Request(['search' => 123]);
-            $result = $this->query->handle($request);
-
-            expect($result->count())->toBe(2);
-        });
-
         it('handles empty string search parameter', function (): void {
             User::factory()->create(['name' => 'John Doe']);
             User::factory()->create(['name' => 'Jane Smith']);
 
-            $request = new Request(['search' => '']);
-            $result = $this->query->handle($request);
+            $filters = new UserFilters(search: '');
+            $result = $this->query->handle($filters);
 
             expect($result->count())->toBe(2);
         });
@@ -158,8 +148,8 @@ describe('GetUsersQuery', function (): void {
         it('uses withQueryString for pagination', function (): void {
             User::factory(20)->create(['name' => 'Test User']);
 
-            $request = new Request(['search' => 'Test', 'page' => 1]);
-            $result = $this->query->handle($request);
+            $filters = new UserFilters(search: 'Test');
+            $result = $this->query->handle($filters);
 
             expect($result->hasPages())
                 ->toBeTrue()
@@ -181,8 +171,8 @@ describe('GetUsersQuery', function (): void {
                 'email' => 'bob@example.com',
             ]);
 
-            $request = new Request(['search' => 'john']);
-            $result = $this->query->handle($request);
+            $filters = new UserFilters(search: 'john');
+            $result = $this->query->handle($filters);
 
             expect($result->count())->toBe(2);
 
