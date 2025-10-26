@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Http\Controllers\Auth\MagicLinkController;
 use App\Models\User;
 use App\Queries\CheckUserIsAdminQuery;
-use App\Queries\CheckUserIsEmployeeQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -17,14 +16,14 @@ beforeEach(function (): void {
 });
 
 it(
-    'throws 403 exception when signature is invalid in verify method',
+    'throws 403 exception when signature is invalid in show method',
     function (): void {
         $checkUserIsAdminQuery = app(CheckUserIsAdminQuery::class);
-        $checkUserIsEmployeeQuery = app(CheckUserIsEmployeeQuery::class);
+        $getUserGreetingQuery = app(App\Queries\GetUserGreetingQuery::class);
 
         $controller = new MagicLinkController(
             $checkUserIsAdminQuery,
-            $checkUserIsEmployeeQuery,
+            $getUserGreetingQuery,
         );
         $user = User::factory()->create();
 
@@ -33,7 +32,7 @@ it(
 
         // This should trigger the abort(403) call on line 50
         expect(
-            fn (): Illuminate\Http\RedirectResponse => $controller->verify(
+            fn (): Illuminate\Http\RedirectResponse => $controller->show(
                 $request,
                 $user,
             ),

@@ -34,7 +34,7 @@ export default function Dashboard({ greeting, auth }: DashboardProps) {
                             Welcome to your dashboard
                         </p>
                     </div>
-                    <Form action="/logout" method="post">
+                    <Form action="/auth/session" method="delete">
                         {({ processing }) => (
                             <Button
                                 type="submit"

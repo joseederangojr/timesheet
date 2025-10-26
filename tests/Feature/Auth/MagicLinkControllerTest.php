@@ -24,7 +24,7 @@ it('sends magic link notification for existing user', function (): void {
     ]);
 
     $response = $this->withSession(['_token' => 'test-token'])->post(
-        '/login/magic-link',
+        '/auth/magic-link',
         [
             '_token' => 'test-token',
             'email' => 'test@example.com',
@@ -42,7 +42,7 @@ it('sends magic link notification for existing user', function (): void {
 
 it('returns error for non-existent email', function (): void {
     $response = $this->withSession(['_token' => 'test-token'])->post(
-        '/login/magic-link',
+        '/auth/magic-link',
         [
             '_token' => 'test-token',
             'email' => 'nonexistent@example.com',
@@ -64,7 +64,7 @@ it('authenticates user with valid magic link', function (): void {
     $user->roles()->attach($adminRole);
 
     $signedUrl = URL::temporarySignedRoute(
-        'login.magic-link.verify',
+        'auth.magic-link.show',
         now()->addMinutes(15),
         ['user' => $user->id],
     );
@@ -72,6 +72,7 @@ it('authenticates user with valid magic link', function (): void {
     $response = $this->get($signedUrl);
 
     $response->assertRedirect('/admin/dashboard');
+    $response->assertSessionHas('greeting', 'Hello, Admin User');
     $this->assertAuthenticatedAs($user);
 });
 
@@ -82,7 +83,7 @@ it('returns 403 for expired magic link', function (): void {
     ]);
 
     $expiredSignedUrl = URL::temporarySignedRoute(
-        'login.magic-link.verify',
+        'auth.magic-link.show',
         now()->subHours(1), // Expired
         ['user' => $user->id],
     );
@@ -95,7 +96,7 @@ it('returns 403 for expired magic link', function (): void {
 
 it('validates email field for magic link request', function (): void {
     $response = $this->withSession(['_token' => 'test-token'])->post(
-        '/login/magic-link',
+        '/auth/magic-link',
         [
             '_token' => 'test-token',
         ],
@@ -112,7 +113,7 @@ it('returns 403 for invalid signature magic link', function (): void {
     ]);
 
     // Create an invalid signed URL by accessing the route without proper signature
-    $response = $this->get('/login/magic-link/verify/'.$user->id);
+    $response = $this->get('/auth/magic-link/'.$user->id);
 
     $response->assertForbidden();
     $this->assertGuest();
@@ -126,7 +127,7 @@ it('executes abort when signature is invalid', function (): void {
 
     // Use a manually crafted URL with invalid signature to trigger the abort
     $invalidUrl =
-        route('login.magic-link.verify', ['user' => $user->id]).
+        route('auth.magic-link.show', ['user' => $user->id]).
         '?signature=invalid';
 
     $response = $this->get($invalidUrl);
@@ -144,11 +145,10 @@ it(
         ]);
 
         $signedUrl = URL::temporarySignedRoute(
-            'login.magic-link.verify',
+            'auth.magic-link.show',
             now()->addMinutes(15),
             ['user' => $user->id],
         );
-
         $response = $this->get($signedUrl);
 
         $response->assertRedirect('/dashboard');
@@ -166,7 +166,7 @@ it('greets employee user with Hi after magic link login', function (): void {
     $user->roles()->attach($employeeRole);
 
     $signedUrl = URL::temporarySignedRoute(
-        'login.magic-link.verify',
+        'auth.magic-link.show',
         now()->addMinutes(15),
         ['user' => $user->id],
     );

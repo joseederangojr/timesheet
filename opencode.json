@@ -4,11 +4,20 @@
         "laravel-boost": {
             "type": "local",
             "enabled": true,
-            "command": ["php", "artisan", "boost:mcp"]
+            "command": [
+                "php",
+                "artisan",
+                "boost:mcp"
+            ]
         },
         "shadcn": {
             "type": "local",
-            "command": ["pnpm", "dlx", "shadcn@latest", "mcp"],
+            "command": [
+                "pnpm",
+                "dlx",
+                "shadcn@latest",
+                "mcp"
+            ],
             "enabled": true
         }
     }

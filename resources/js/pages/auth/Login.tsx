@@ -52,7 +52,7 @@ export default function Login({ message }: LoginProps) {
 
                     {usePassword ? (
                         <Form
-                            action="/login/password"
+                            action="/auth/password"
                             method="post"
                             resetOnSuccess={false}
                         >
@@ -106,7 +106,7 @@ export default function Login({ message }: LoginProps) {
                         </Form>
                     ) : (
                         <Form
-                            action="/login/magic-link"
+                            action="/auth/magic-link"
                             method="post"
                             resetOnSuccess={false}
                         >

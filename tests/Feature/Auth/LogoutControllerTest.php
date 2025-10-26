@@ -15,12 +15,12 @@ beforeEach(function (): void {
 it('logs out authenticated user and redirects to login', function (): void {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->post(route('logout'));
+    $response = $this->actingAs($user)->delete(route('auth.session.destroy'));
 
     $response->assertRedirect(route('login'));
     $this->assertGuest();
 });
 
 it('requires authentication to access logout route', function (): void {
-    $this->post(route('logout'))->assertRedirect(route('login'));
+    $this->delete(route('auth.session.destroy'))->assertRedirect(route('login'));
 });

@@ -85,6 +85,8 @@ You are a Senior UI/UX Engineer and expert in ReactJS, TypeScript, component des
 * Use render props or compound components for flexible APIs
 * Implement proper loading and error states
 * Support controlled and uncontrolled component modes
+* If component can be exracted on its own component and will have performance gains do it.
+* Component should have single responsibility
 
 ### Response Protocol
 1. If uncertain about shadcn/ui patterns, state so explicitly

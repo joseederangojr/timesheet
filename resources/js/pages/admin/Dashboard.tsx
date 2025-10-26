@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Home, LogOut } from 'lucide-react';
 import { useState } from 'react';
 
 interface AdminDashboardProps {
+    greeting?: string;
     auth: {
         user: {
             name: string;
@@ -14,7 +15,10 @@ interface AdminDashboardProps {
     };
 }
 
-export default function AdminDashboard({ auth }: AdminDashboardProps) {
+export default function AdminDashboard({
+    greeting,
+    auth,
+}: AdminDashboardProps) {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
     const toggleSidebar = () => {
@@ -65,7 +69,7 @@ export default function AdminDashboard({ auth }: AdminDashboardProps) {
 
                 {/* Sidebar Footer */}
                 <div className="border-t p-4">
-                    <Form action="/logout" method="post">
+                    <Form action="/auth/session" method="delete">
                         {({ processing }) => (
                             <Button
                                 type="submit"
@@ -110,7 +114,7 @@ export default function AdminDashboard({ auth }: AdminDashboardProps) {
                 <main className="p-6">
                     <div className="mb-6">
                         <h1 className="text-3xl font-bold">
-                            Hello, {auth.user.name}
+                            {greeting || `Hello, ${auth.user.name}`}
                         </h1>
                         <p className="text-muted-foreground">
                             Welcome to the admin dashboard

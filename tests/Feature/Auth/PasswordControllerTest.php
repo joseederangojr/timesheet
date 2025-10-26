@@ -24,7 +24,7 @@ it(
         $user->roles()->attach($adminRole);
 
         $response = $this->withSession(['_token' => 'test-token'])->post(
-            '/login/password',
+            '/auth/password',
             [
                 '_token' => 'test-token',
                 'email' => 'admin@example.com',
@@ -33,6 +33,7 @@ it(
         );
 
         $response->assertRedirect('/admin/dashboard');
+        $response->assertSessionHas('greeting', 'Hello, Admin User');
         $this->assertAuthenticatedAs($user);
     },
 );
@@ -49,7 +50,7 @@ it(
         $user->roles()->attach($employeeRole);
 
         $response = $this->withSession(['_token' => 'test-token'])->post(
-            '/login/password',
+            '/auth/password',
             [
                 '_token' => 'test-token',
                 'email' => 'employee@example.com',
@@ -70,7 +71,7 @@ it('returns error for invalid credentials', function (): void {
     ]);
 
     $response = $this->withSession(['_token' => 'test-token'])->post(
-        '/login/password',
+        '/auth/password',
         [
             '_token' => 'test-token',
             'email' => 'test@example.com',
@@ -87,7 +88,7 @@ it('returns error for invalid credentials', function (): void {
 
 it('validates required fields', function (): void {
     $response = $this->withSession(['_token' => 'test-token'])->post(
-        '/login/password',
+        '/auth/password',
         [
             '_token' => 'test-token',
         ],

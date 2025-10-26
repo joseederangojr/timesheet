@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Session;
 
 final class LogoutController
 {
-    public function logout(): RedirectResponse
+    public function destroy(): RedirectResponse
     {
         Auth::logout();
         Session::invalidate();
