@@ -10,7 +10,7 @@ describe('Admin Users Controller', function (): void {
         $this->adminRole = Role::factory()->create(['name' => 'admin']);
         $this->employeeRole = Role::factory()->create(['name' => 'employee']);
 
-        $this->admin = User::factory()->create();
+        $this->admin = User::factory()->create(['name' => 'Admin User']);
         $this->admin->roles()->attach($this->adminRole);
     });
 
@@ -128,7 +128,7 @@ describe('Admin Users Controller', function (): void {
                     ->where('filters.sort_by', 'name')
                     ->where('filters.sort_direction', 'asc')
                     ->has('users.data', 3) // admin + 2 created
-                    ->where('users.data.0.name', 'Alice First'),
+                    ->where('users.data.0.name', 'Admin User'), // Admin User comes first alphabetically
             );
         });
 
@@ -230,5 +230,110 @@ describe('Admin Users Controller', function (): void {
                     );
             },
         );
+
+        it('can filter users by role', function (): void {
+            $adminUser = User::factory()->create(['name' => 'Admin User']);
+            $adminUser->roles()->attach($this->adminRole);
+
+            $employeeUser = User::factory()->create([
+                'name' => 'Employee User',
+            ]);
+            $employeeUser->roles()->attach($this->employeeRole);
+
+            $response = $this->actingAs($this->admin)->get(
+                '/admin/users?role=admin',
+            );
+
+            expect($response)->assertSuccessful()->assertInertia(
+                fn ($page) => $page
+                    ->component('admin/users/index')
+                    ->where('filters.role', 'admin')
+                    ->has('users.data', 2) // admin + adminUser
+                    ->where('users.data.0.name', $this->admin->name) // admin is created first
+                    ->where('users.data.1.name', 'Admin User'),
+            );
+        });
+
+        it('can filter users by verified status', function (): void {
+            $verifiedUser = User::factory()->create([
+                'name' => 'Verified User',
+                'email_verified_at' => now(),
+            ]);
+
+            $unverifiedUser = User::factory()->create([
+                'name' => 'Unverified User',
+                'email_verified_at' => null,
+            ]);
+
+            $response = $this->actingAs($this->admin)->get(
+                '/admin/users?verified=verified',
+            );
+
+            expect($response)->assertSuccessful()->assertInertia(
+                fn ($page) => $page
+                    ->component('admin/users/index')
+                    ->where('filters.verified', 'verified')
+                    ->has('users.data', 2) // admin + verifiedUser
+                    ->where('users.data.0.name', $this->admin->name) // admin is verified
+                    ->where('users.data.1.name', 'Verified User'),
+            );
+        });
+
+        it('can filter users by unverified status', function (): void {
+            $verifiedUser = User::factory()->create([
+                'name' => 'Verified User',
+                'email_verified_at' => now(),
+            ]);
+
+            $unverifiedUser = User::factory()->create([
+                'name' => 'Unverified User',
+                'email_verified_at' => null,
+            ]);
+
+            $response = $this->actingAs($this->admin)->get(
+                '/admin/users?verified=unverified',
+            );
+
+            expect($response)
+                ->assertSuccessful()
+                ->assertInertia(
+                    fn ($page) => $page
+                        ->component('admin/users/index')
+                        ->where('filters.verified', 'unverified')
+                        ->has('users.data', 1)
+                        ->where('users.data.0.name', 'Unverified User'),
+                );
+        });
+
+        it('can combine search, sort, and filter together', function (): void {
+            $adminUser = User::factory()->create([
+                'name' => 'John Admin',
+                'email_verified_at' => now(),
+            ]);
+            $adminUser->roles()->attach($this->adminRole);
+
+            $employeeUser = User::factory()->create([
+                'name' => 'Jane Employee',
+                'email_verified_at' => now(),
+            ]);
+            $employeeUser->roles()->attach($this->employeeRole);
+
+            // Search for "Admin", sort by name ascending, filter by admin role
+            $response = $this->actingAs($this->admin)->get(
+                '/admin/users?search=Admin&sort_by=name&sort_direction=asc&role=admin',
+            );
+
+            expect($response)->assertSuccessful()->assertInertia(
+                fn ($page) => $page
+                    ->component('admin/users/index')
+                    ->where('filters.search', 'Admin')
+                    ->where('filters.sort_by', 'name')
+                    ->where('filters.sort_direction', 'asc')
+                    ->where('filters.role', 'admin')
+                    ->has('users.data', 2) // Admin User + John Admin
+                    ->where('users.data.0.name', 'Admin User')
+                    ->where('users.data.1.name', 'John Admin'),
+            );
+        });
     });
 });

@@ -1,24 +1,44 @@
-import { InertiaLinkProps } from '@inertiajs/react';
-import { LucideIcon } from 'lucide-react';
-
-export interface BreadcrumbItem {
-    title: string;
-    href: string;
+interface SharedMetadata {
+    sidebar: 1 | 0;
+    theme: 'system' | 'light' | 'dark';
 }
 
-export interface NavGroup {
-    title: string;
-    items: NavItem[];
+interface AuthUser {
+    id: number;
+    name: string;
+    email: string;
 }
 
-export interface NavItem {
-    title: string;
-    href: NonNullable<InertiaLinkProps['href']>;
-    icon?: LucideIcon | null;
-    isActive?: boolean;
+interface Auth {
+    user: AuthUser;
 }
 
 export interface SharedData {
     name: string;
-    [key: string]: unknown;
+    auth?: Auth;
+    metadata: SharedMetadata;
+}
+
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface Paginated<T> {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    links: PaginationLink[];
+}
+
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+    email_verified_at: string | null;
+    created_at: string;
+    updated_at: string;
 }

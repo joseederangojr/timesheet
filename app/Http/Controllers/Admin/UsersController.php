@@ -17,14 +17,18 @@ final readonly class UsersController
     public function index(Request $request): Response
     {
         $filters = UserFilters::fromRequest($request);
-        $users = $this->getUsersQuery->handle($filters);
+        $users = $this->getUsersQuery->handle($filters)->withQueryString();
 
         return Inertia::render('admin/users/index', [
-            'users' => $users,
+            'users' => fn () => $users,
             'filters' => $request->only([
                 'search',
                 'sort_by',
                 'sort_direction',
+                'role',
+                'verified',
+                'page',
+                'per_page',
             ]),
         ]);
     }

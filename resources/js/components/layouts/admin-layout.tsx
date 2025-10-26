@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/auth-context';
-import { useSidebarContext } from '@/contexts/sidebar-context';
+import { useAuthUser } from '@/hooks/use-auth-user';
+import { useSidebar } from '@/hooks/use-sidebar';
 import { cn } from '@/lib/utils';
 import { Form, Link } from '@inertiajs/react';
 import {
@@ -39,8 +39,8 @@ const navigationItems: NavigationItem[] = [
 ];
 
 export function AdminLayout({ children, currentPath }: AdminLayoutProps) {
-    const { auth } = useAuth();
-    const { collapsed, toggle } = useSidebarContext();
+    const user = useAuthUser();
+    const { sidebarCollapsed, toggleSidebar } = useSidebar();
 
     const itemsWithActiveState = navigationItems.map((item) => ({
         ...item,
@@ -50,12 +50,13 @@ export function AdminLayout({ children, currentPath }: AdminLayoutProps) {
     return (
         <div className="flex min-h-screen bg-background">
             <AdminSidebar
-                collapsed={collapsed}
-                onToggle={toggle}
+                collapsed={sidebarCollapsed}
+                onToggle={toggleSidebar}
                 navigationItems={itemsWithActiveState}
             />
             <div className="flex-1">
-                <AdminHeader user={auth.user} />
+                {user && <AdminHeader user={user} />}
+
                 <main className="p-6">{children}</main>
             </div>
         </div>

@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/auth-context';
+import { useAuthUser } from '@/hooks/use-auth-user';
 import { cn } from '@/lib/utils';
 import { Form } from '@inertiajs/react';
 import { LogOut } from 'lucide-react';
@@ -11,7 +11,7 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children, className }: AppLayoutProps) {
-    const { auth } = useAuth();
+    const user = useAuthUser();
 
     return (
         <div className={cn('min-h-screen bg-background', className)}>
@@ -20,7 +20,7 @@ export function AppLayout({ children, className }: AppLayoutProps) {
                     <h1 className="text-xl font-bold">Timesheet</h1>
                     <div className="flex items-center gap-4">
                         <span className="text-sm text-muted-foreground">
-                            {auth.user.name}
+                            {user?.name}
                         </span>
                         <Form action="/auth/session" method="delete">
                             {({ processing }) => (

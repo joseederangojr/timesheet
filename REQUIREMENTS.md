@@ -19,8 +19,7 @@
 -- Dashboard - For now empty dashboard with Hello, ${name}
 
 ## Dashboard - Users - Admin
-- As an Admin, i want to have Users in sidebar item
-When I click i should be able to view list of users
+- As an Admin, I want to be able to filter users: role, verified
 
 Users - List of users, you can filter, sort, create, edit, delete
 Timesheets - List of timesheets, you can request for change, verify timesheet, filter, sort

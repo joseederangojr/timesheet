@@ -31,7 +31,7 @@ it('can toggle to password login mode', function (): void {
 
     $page
         ->assertSee('Sign In with Magic Link')
-        ->click('[role="switch"]')
+        ->click('#login-method-toggle')
         ->assertSee('Sign In with Password')
         ->assertSee('Enter your email and password to sign in')
         ->assertSee('Password')
@@ -43,9 +43,9 @@ it('can toggle back to magic link mode', function (): void {
     $page = visit('/login');
 
     $page
-        ->click('[role="switch"]')
+        ->click('#login-method-toggle')
         ->assertSee('Sign In with Password')
-        ->click('[role="switch"]')
+        ->click('#login-method-toggle')
         ->assertSee('Sign In with Magic Link')
         ->assertSee('Send Magic Link');
 });
@@ -84,7 +84,7 @@ it('can login with password for existing user', function (): void {
     $page = visit('/login');
 
     $page
-        ->click('[role="switch"]')
+        ->click('#login-method-toggle')
         ->fill('email', 'test@example.com')
         ->fill('password', 'password')
         ->click('Sign In')
@@ -101,7 +101,7 @@ it('shows error for invalid password login', function (): void {
     $page = visit('/login');
 
     $page
-        ->click('[role="switch"]')
+        ->click('#login-method-toggle')
         ->fill('email', 'test@example.com')
         ->fill('password', 'wrongpassword')
         ->click('Sign In')
@@ -120,7 +120,8 @@ it('greets admin user with Hello after login', function (): void {
     $page = visit('/login');
 
     $page
-        ->click('[role="switch"]')
+        ->click('#login-method-toggle')
+        ->waitForText('Sign In')
         ->fill('email', 'admin@example.com')
         ->fill('password', 'password')
         ->click('Sign In')
@@ -140,7 +141,8 @@ it('greets employee user with Hi after login', function (): void {
     $page = visit('/login');
 
     $page
-        ->click('[role="switch"]')
+        ->click('#login-method-toggle')
+        ->waitForText('Sign In')
         ->fill('email', 'employee@example.com')
         ->fill('password', 'password')
         ->click('Sign In')
@@ -158,7 +160,7 @@ it('can logout from dashboard', function (): void {
     $page = visit('/login');
 
     $page
-        ->click('[role="switch"]')
+        ->click('#login-method-toggle')
         ->fill('email', 'test@example.com')
         ->fill('password', 'password')
         ->click('Sign In')

@@ -14,7 +14,7 @@ it('can toggle admin sidebar', function (): void {
     $page = visit('/admin/dashboard');
 
     // Check that sidebar is expanded by default
-    $page->assertSee('Dashboard')->assertSee('Users');
+    $page->waitForText('Dashboard')->assertSee('Users');
 
     // Click the collapse toggle button
     $page->click('button[aria-label="Collapse sidebar"]');

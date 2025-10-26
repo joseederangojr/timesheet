@@ -6,6 +6,9 @@ use App\DTOs\UserFilters;
 use App\Models\Role;
 use App\Models\User;
 use App\Queries\GetUsersQuery;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
 
 describe('GetUsersQuery', function (): void {
     beforeEach(function (): void {

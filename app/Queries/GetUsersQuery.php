@@ -40,8 +40,30 @@ final readonly class GetUsersQuery
                     ->where('name', 'like', sprintf('%%%s%%', $search))
                     ->orWhere('email', 'like', sprintf('%%%s%%', $search));
             })
+            ->when($filters->role, function (
+                Builder $query,
+                string $role,
+            ): void {
+                $query->whereHas('roles', function (Builder $roleQuery) use (
+                    $role,
+                ): void {
+                    $roleQuery->where('name', $role);
+                });
+            })
+            ->when($filters->verified, function (
+                Builder $query,
+                string $verified,
+            ): void {
+                if ($verified === 'verified') {
+                    $query->whereNotNull('email_verified_at');
+                } elseif ($verified === 'unverified') {
+                    $query->whereNull('email_verified_at');
+                }
+            })
             ->orderBy($sortBy, $sortDirection)
-            ->paginate(15)
+            ->paginate(
+                perPage: $filters->perPage ? (int) $filters->perPage : null,
+            )
             ->withQueryString();
     }
 }
