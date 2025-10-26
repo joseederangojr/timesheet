@@ -219,7 +219,11 @@ jobs:
       - name: Setup Laravel Environment
         run: |
           cp .env.example .env
+          cp .env.testing .env.testing
           php artisan key:generate
+
+      - name: Run Database Migrations
+        run: php artisan migrate --force
 
       - name: Perform Release
         id: release
