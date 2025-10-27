@@ -27,8 +27,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "24"
-          cache: "npm"
+          node-version: '24'
+          cache: 'npm'
 
       - name: Get Composer Cache Directory
         id: composer-cache-dir
@@ -55,16 +55,6 @@ jobs:
 
       - name: Install Node Dependencies
         run: npm ci
-
-      - name: Cache Vite Build Output
-        uses: actions/cache@v4
-        with:
-          path: |
-            public/build
-            bootstrap/ssr
-          key: ${{ runner.os }}-vite-${{ hashFiles('**/package-lock.json', 'vite.config.*', 'resources/**/*') }}
-          restore-keys: |
-            ${{ runner.os }}-vite-
 
       - name: Build Assets
         run: npm run build
