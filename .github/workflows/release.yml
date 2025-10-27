@@ -123,7 +123,10 @@ jobs:
       - name: Setup Laravel Environment
         run: |
           cp .env.example .env
+          rm .env.testing
           php artisan key:generate
+          touch database/database.sqlite
+          chmod -R 777 storage boostrap/cache
 
       - name: Run Database Migrations
         run: php artisan migrate --force
@@ -146,6 +149,9 @@ jobs:
 
       - name: Run All Tests
         run: php artisan test
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
 
       - name: Store Browser Screenshots
         if: success() || failure()
@@ -204,10 +210,9 @@ jobs:
       - name: Perform Release
         id: release
         if: steps.check.outputs.should-release == 'true' || inputs.force_release == true
-        environment:
-          name: production
-          url: ${{ steps.release.outputs.release-url }}
         env:
+          NAME: production
+          URL: ${{ steps.release.outputs.release-url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com

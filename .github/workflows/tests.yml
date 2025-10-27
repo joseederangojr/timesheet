@@ -113,7 +113,10 @@ jobs:
       - name: Setup Laravel Environment
         run: |
           cp .env.example .env
+          rm .env.testing
           php artisan key:generate
+          touch database/database.sqlite
+          chmod -R 777 storage boostrap/cache
 
       - name: Run Database Migrations
         run: php artisan migrate --force
@@ -136,6 +139,9 @@ jobs:
 
       - name: Run All Tests
         run: php artisan test
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
 
       - name: Store Browser Screenshots
         if: success() || failure()
