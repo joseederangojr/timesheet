@@ -95,8 +95,8 @@ jobs:
           npm run format:php
           vendor/bin/pint -p
           php artisan test --bail --parallel --testsuite=Unit
-          php artisan test --bail --parallel --testsuite=Feature
-          php artisan test --bail --parallel --testsuite=Browser
+          php artisan test --bail --testsuite=Feature
+          php artisan test --bail --testsuite=Browser
 
       - name: Store Browser Screenshots
         if: success() || failure()
