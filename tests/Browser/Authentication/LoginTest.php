@@ -56,7 +56,6 @@ it('can send magic link for existing user', function (): void {
     $user = User::factory()->create();
 
     $page = visit('/login')
-        ->click('Sign In with Magic Link')
         ->fill('email', $user->email)
         ->click('Send Magic Link');
 

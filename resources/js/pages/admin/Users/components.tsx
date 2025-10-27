@@ -4,7 +4,6 @@ import { DataTablePagination } from '@/components/data-table-pagination';
 import { DataTableViewOptions } from '@/components/data-table-view-options';
 import { SearchInput } from '@/components/search-input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     DataTable,
@@ -21,7 +20,6 @@ import {
     PaginationState,
     SortingState,
 } from '@tanstack/react-table';
-import { ArrowUpDown } from 'lucide-react';
 import * as React from 'react';
 
 interface User {
@@ -127,17 +125,7 @@ const userColumns: ColumnDef<User>[] = [
     {
         accessorKey: 'name',
         header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === 'asc')
-                    }
-                >
-                    User
-                    <ArrowUpDown />
-                </Button>
-            );
+            return <DataTableColumnHeader column={column} title="Name" />;
         },
         cell: ({ row }) => {
             const user = row.original;
