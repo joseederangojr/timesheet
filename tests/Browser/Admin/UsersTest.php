@@ -173,8 +173,8 @@ it('sorts users by name', function (): void {
 
     $page = visit('/admin/users');
 
-    // Click the User column header to sort
-    $page->click('User');
+    // Click the Name column header to sort
+    $page->click('Name');
 
     // Should show the users (sorting may take effect)
     $page
