@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Providers\AppServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Validation\Rules\Password;
 
@@ -63,6 +64,8 @@ it('sets password defaults for local environment', function (): void {
 });
 
 it('sets password defaults for production environment', function (): void {
+    Http::fake();
+
     $app = mock(Application::class);
     $app->shouldReceive('isLocal')->andReturn(false);
     $app->shouldReceive('runningUnitTests')->andReturn(false);
