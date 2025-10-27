@@ -197,6 +197,7 @@ const userColumns: ColumnDef<User>[] = [
 ];
 
 export function AdminUsersDataTable() {
+    'use no memo';
     const {
         props: { users, filters },
     } = usePage<{ filters: UsersFilters; users: Paginated<User> }>();
