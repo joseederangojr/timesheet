@@ -19,7 +19,7 @@
 -- Dashboard - For now empty dashboard with Hello, ${name}
 
 ## Dashboard - Users - Admin
-- As an Admin, I want to be able to filter users: role, verified
+- As an Admin, I want to be able to  edit user
 
 Users - List of users, you can filter, sort, create, edit, delete
 Timesheets - List of timesheets, you can request for change, verify timesheet, filter, sort
