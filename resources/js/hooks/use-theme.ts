@@ -61,7 +61,14 @@ export function initializeTheme() {
 
 export function useTheme() {
     const { props } = usePage<SharedProps>();
-    const [theme, setTheme] = useState<Theme>(props.metadata.theme);
+    const [theme, setTheme] = useState<Theme>(() => {
+        // Use localStorage value if available, otherwise use props
+        if (typeof window !== 'undefined') {
+            const savedTheme = localStorage.getItem('theme') as Theme | null;
+            return savedTheme || props.metadata.theme;
+        }
+        return props.metadata.theme;
+    });
 
     const updateTheme = useCallback((mode: Theme) => {
         setTheme(mode);
@@ -76,20 +83,13 @@ export function useTheme() {
     }, []);
 
     useEffect(() => {
-        // Use the shared prop as the initial value, but allow localStorage to override
-        const savedTheme = localStorage.getItem('theme') as Theme | null;
-        const initialTheme = savedTheme || props.metadata.theme;
-
-        if (initialTheme !== theme) {
-            updateTheme(initialTheme);
-        }
-
+        // Listen for system theme changes
         return () =>
             mediaQuery()?.removeEventListener(
                 'change',
                 handleSystemThemeChange,
             );
-    }, [updateTheme, props.metadata.theme, theme]);
+    }, []);
 
     return { theme, updateTheme } as const;
 }
