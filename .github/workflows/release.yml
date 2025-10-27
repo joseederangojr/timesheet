@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       force_release:
-        description: 'Force release even if tests fail'
+        description: "Force release even if tests fail"
         required: false
         default: false
         type: boolean
@@ -36,8 +36,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
-          cache: 'npm'
+          node-version: "24"
+          cache: "npm"
 
       - name: Get Composer Cache Directory
         id: composer-cache-dir
@@ -139,13 +139,14 @@ jobs:
 
       - name: Run Linting and Static Analysis
         run: |
-          npm run format:php
-          ./vendor/bin/pint -p
           npm run format
-          ./vendor/bin/rector process
-          ./vendor/bin/phpstan --memory-limit=2G
           npm run lint
           npm run test:types
+          npm run build
+          vendor/bin/rector process
+          vendor/bin/phpstan --memory-limit=2G
+          npm run format:php
+          vendor/bin/pint -p
 
       - name: Run All Tests
         run: php artisan test

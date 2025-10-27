@@ -1,6 +1,15 @@
-composer update
-npm install
-composer test
+npm run format
+npm run lint
+npm run test:types
 npm run build
-git add composer.lock package-lock.json
+npm install --lock-file-only
+git add package-lock.json
+
+vendor/bin/rector process
+vendor/bin/phpstan --memory-limit=2G
+npm run format:php
+vendor/bin/pint -p
+composer update --lock
+git add composer.lock
+
 git diff --cached --name-only | xargs git add
