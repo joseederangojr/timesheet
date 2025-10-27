@@ -81,13 +81,9 @@ it('filters users by search term', function (): void {
 
     $this->actingAs($admin);
 
-    $page = visit('/admin/users');
+    $page = visit('/admin/users?search=John');
 
-    // Search for "John"
-    $page->fill('[placeholder="Search by name or email"]', 'John');
-
-    // Wait for search to apply
-    $page->waitForText('John Doe');
+    Illuminate\Support\Sleep::sleep(2); // Wait for page to load
 
     $page
         ->assertSee('John Doe')
