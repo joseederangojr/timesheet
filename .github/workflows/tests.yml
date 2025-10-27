@@ -90,14 +90,13 @@ jobs:
           npm run format
           npm run lint
           npm run test:types
-          npm run build
           vendor/bin/rector process
           vendor/bin/phpstan --memory-limit=2G
           npm run format:php
           vendor/bin/pint -p
-          php run test --bail --parallel --testsuite=Unit
-          php run test --bail --parallel --testsuite=Feature
-          php run test --bail --parallel --testsuite=Browser
+          php artisan test --bail --parallel --testsuite=Unit
+          php artisan test --bail --parallel --testsuite=Feature
+          php artisan test --bail --parallel --testsuite=Browser
 
       - name: Store Browser Screenshots
         if: success() || failure()
