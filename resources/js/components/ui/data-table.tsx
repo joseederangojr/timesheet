@@ -1,5 +1,5 @@
 "use client";
-
+"use no memo";
 import * as React from "react";
 import {
     Cell,
@@ -55,8 +55,6 @@ export function useDataTable<T>({
     actions,
     onPaginationChange,
 }: UseDataTableProps<T>) {
-     
-    'use no memo';
     const [sortingState, setSortingState] =
         React.useState<SortingState>(sorting);
     const [columnVisibility, setColumnVisibility] =
