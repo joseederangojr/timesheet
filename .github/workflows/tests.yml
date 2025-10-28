@@ -105,4 +105,5 @@ jobs:
           name: browser-screenshots-${{ github.run_id }}
           path: |
             tests/Browser/Screenshots
+            storage/logs
           retention-days: 3
