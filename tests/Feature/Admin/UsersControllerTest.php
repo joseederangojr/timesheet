@@ -336,4 +336,167 @@ describe('Admin Users Controller', function (): void {
             );
         });
     });
+
+    describe('store', function (): void {
+        it('creates a new user successfully', function (): void {
+            $userRole = Role::factory()->create(['name' => 'user']);
+
+            $userData = [
+                '_token' => 'test-token',
+                'name' => 'New User',
+                'email' => 'newuser@example.com',
+                'password' => 'password123',
+                'roles' => ['user'],
+            ];
+
+            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+
+            expect($response)->assertRedirect('/admin/users')->assertSessionHas('success', 'User created successfully.');
+
+            $this->assertDatabaseHas('users', [
+                'name' => 'New User',
+                'email' => 'newuser@example.com',
+            ]);
+
+            $newUser = User::query()->where('email', 'newuser@example.com')->first();
+            expect($newUser)->not->toBeNull();
+            expect($newUser->roles->pluck('name'))->toContain('user');
+        });
+
+        it('requires authentication to create users', function (): void {
+            $userData = [
+                '_token' => 'test-token',
+                'name' => 'New User',
+                'email' => 'newuser@example.com',
+                'password' => 'password123',
+                'roles' => ['user'],
+            ];
+
+            $response = $this->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+
+            expect($response)->assertRedirect('/login');
+        });
+
+        it('requires admin role to create users', function (): void {
+            $employee = User::factory()->create();
+            $employee->roles()->attach($this->employeeRole);
+
+            $userData = [
+                '_token' => 'test-token',
+                'name' => 'New User',
+                'email' => 'newuser@example.com',
+                'password' => 'password123',
+                'roles' => ['user'],
+            ];
+
+            $response = $this->actingAs($employee)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+
+            expect($response)->assertForbidden();
+        });
+
+        it('validates required fields', function (): void {
+            $userData = ['_token' => 'test-token'];
+
+            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+
+            expect($response)->assertRedirect()->assertSessionHasErrors([
+                'name',
+                'email',
+                'password',
+                'roles',
+            ]);
+        });
+
+        it('validates email format', function (): void {
+            $userData = [
+                '_token' => 'test-token',
+                'name' => 'New User',
+                'email' => 'invalid-email',
+                'password' => 'password123',
+                'roles' => ['user'],
+            ];
+
+            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+
+            expect($response)->assertRedirect()->assertSessionHasErrors('email');
+        });
+
+        it('validates unique email', function (): void {
+            User::factory()->create(['email' => 'existing@example.com']);
+
+            $userData = [
+                '_token' => 'test-token',
+                'name' => 'New User',
+                'email' => 'existing@example.com',
+                'password' => 'password123',
+                'roles' => ['user'],
+            ];
+
+            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+
+            expect($response)->assertRedirect()->assertSessionHasErrors('email');
+        });
+
+        it('validates password minimum length', function (): void {
+            $userData = [
+                '_token' => 'test-token',
+                'name' => 'New User',
+                'email' => 'newuser@example.com',
+                'password' => '123',
+                'roles' => ['user'],
+            ];
+
+            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+
+            expect($response)->assertRedirect()->assertSessionHasErrors('password');
+        });
+
+        it('validates roles are required', function (): void {
+            $userData = [
+                '_token' => 'test-token',
+                'name' => 'New User',
+                'email' => 'newuser@example.com',
+                'password' => 'password123',
+                'roles' => [],
+            ];
+
+            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+
+            expect($response)->assertRedirect()->assertSessionHasErrors('roles');
+        });
+
+        it('validates roles exist', function (): void {
+            $userData = [
+                '_token' => 'test-token',
+                'name' => 'New User',
+                'email' => 'newuser@example.com',
+                'password' => 'password123',
+                'roles' => ['nonexistent'],
+            ];
+
+            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+
+            expect($response)->assertRedirect()->assertSessionHasErrors('roles.0');
+        });
+
+        it('assigns multiple roles correctly', function (): void {
+            $userRole = Role::factory()->create(['name' => 'user']);
+            $managerRole = Role::factory()->create(['name' => 'manager']);
+
+            $userData = [
+                '_token' => 'test-token',
+                'name' => 'Multi Role User',
+                'email' => 'multi@example.com',
+                'password' => 'password123',
+                'roles' => ['user', 'manager'],
+            ];
+
+            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+
+            expect($response)->assertRedirect('/admin/users');
+
+            $newUser = User::query()->where('email', 'multi@example.com')->first();
+            expect($newUser->roles->pluck('name')->sort())->toEqual(collect(['user', 'manager'])->sort());
+        });
+    });
 });

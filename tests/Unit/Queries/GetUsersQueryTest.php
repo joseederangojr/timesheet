@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\DTOs\UserFilters;
+use App\Data\UserFilters;
 use App\Models\Role;
 use App\Models\User;
 use App\Queries\GetUsersQuery;

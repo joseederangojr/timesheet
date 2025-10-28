@@ -22,9 +22,7 @@ it('displays the admin users page with user list', function (): void {
 
     $this->actingAs($admin);
 
-    $page = visit('/admin/users');
-
-    Illuminate\Support\Sleep::sleep(2); // Wait for page to load
+    $page = visit('/admin/users')->wait(2);
 
     $page
         ->assertSee('Users')
@@ -81,9 +79,7 @@ it('filters users by search term', function (): void {
 
     $this->actingAs($admin);
 
-    $page = visit('/admin/users?search=John');
-
-    Illuminate\Support\Sleep::sleep(2); // Wait for page to load
+    $page = visit('/admin/users?search=John')->wait(1);
 
     $page
         ->assertSee('John Doe')
