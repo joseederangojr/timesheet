@@ -1,3 +1,23 @@
+## [1.1.0](https://github.com/tailoredstack/timesheet/compare/v1.0.0...v1.1.0) (2025-10-28)
+
+### Features
+
+* add admin user management with sidebar and theme support ([d67e117](https://github.com/tailoredstack/timesheet/commit/d67e117973da8fd5a9921f52c3ebd7b5e22ba017))
+* add data table components and enhance user interface ([60d2dba](https://github.com/tailoredstack/timesheet/commit/60d2dba7cbb2de97b536a44f83671356712192c0))
+* add React Compiler support ([875a11a](https://github.com/tailoredstack/timesheet/commit/875a11a27684e5cd05fb673045f789ae9b78420a))
+* add user sorting functionality to admin users page ([a544385](https://github.com/tailoredstack/timesheet/commit/a544385ee68515bc23f493bbd647abd851268a0d))
+* implement comprehensive authentication system refactoring ([96f2fd0](https://github.com/tailoredstack/timesheet/commit/96f2fd03c8fa7e24c6a19926fb5c6c005c01ff85))
+
+### Bug Fixes
+
+* add HTTP client faking for password validation tests ([b31b262](https://github.com/tailoredstack/timesheet/commit/b31b262f867203af92e5d8570f2229a63e4563c3))
+* add missing type hints in GetUsersQuery closure parameters ([0729616](https://github.com/tailoredstack/timesheet/commit/0729616dfbd7e49bcec16c604b325674dee51568))
+* correct notification assertion in browser test ([75af689](https://github.com/tailoredstack/timesheet/commit/75af689e084013464c871b6ce2a50cd918263081))
+* correct notification assertion in browser test and simplify CI workflows ([19f5e24](https://github.com/tailoredstack/timesheet/commit/19f5e245767fdf206e16b506afb6d2836be13250))
+* correct user search filtering browser test ([bec66bd](https://github.com/tailoredstack/timesheet/commit/bec66bd1506215529892f5fdf9806b2e689c5d94))
+* file names macos case insensitivity issue ([5e9f713](https://github.com/tailoredstack/timesheet/commit/5e9f713f16b57c93ea3e1a9244f3cc8552860a13))
+* resolve React Compiler compatibility issues ([bc8aa43](https://github.com/tailoredstack/timesheet/commit/bc8aa43cb01c02c9f1116c9caab5995bff2705e7))
+
 ## 1.0.0 (2025-10-25)
 
 ### Features
