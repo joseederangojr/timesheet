@@ -84,7 +84,7 @@ jobs:
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
-          chmod -R 777 storage bootstrap/cache
+          chmod -R 777 storage public bootstrap/cache
           npm run build
           php artisan migrate --force
           npm run format
@@ -106,4 +106,6 @@ jobs:
           path: |
             tests/Browser/Screenshots
             storage/logs
+            public/build
+
           retention-days: 3
