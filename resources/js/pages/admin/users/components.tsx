@@ -1,9 +1,11 @@
+import { UserForm } from '@/components/admin/UserForm';
 import { ComboboxFilter } from '@/components/combobox-filter';
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { DataTablePagination } from '@/components/data-table-pagination';
 import { DataTableViewOptions } from '@/components/data-table-view-options';
 import { SearchInput } from '@/components/search-input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     DataTable,
@@ -13,6 +15,13 @@ import {
     DataTableRoot,
     useDataTable,
 } from '@/components/ui/data-table';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Paginated } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import {
@@ -20,6 +29,7 @@ import {
     PaginationState,
     SortingState,
 } from '@tanstack/react-table';
+import { Plus } from 'lucide-react';
 import * as React from 'react';
 
 interface User {
@@ -226,7 +236,7 @@ export function AdminUsersDataTable() {
     const handlePaginationChange = (pagination?: PaginationState) => {
         if (!pagination) return;
         const page = (pagination?.pageIndex || 0) + 1;
-        const perPage = pagination?.pageSize || 10;
+        const perPage = pagination?.pageSize || 15;
         onAdminUsersFilterChange({
             ...filters,
             page: page.toString(),
@@ -333,13 +343,42 @@ export function AdminUsersContainer({
     return <div className="space-y-6">{children}</div>;
 }
 
+interface Role {
+    id: number;
+    name: string;
+}
+
 export function AdminUsersHeader() {
+    const { props } = usePage<{ roles: Role[] }>();
+    const [modalOpen, setModalOpen] = React.useState(false);
+
     return (
         <div className="mb-6">
-            <h1 className="text-3xl font-bold">Users</h1>
-            <p className="text-muted-foreground">
-                Manage system users and their roles
-            </p>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold">Users</h1>
+                    <p className="text-muted-foreground">
+                        Manage system users and their roles
+                    </p>
+                </div>
+                <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+                    <DialogTrigger asChild>
+                        <Button>
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add User
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                            <DialogTitle>Create New User</DialogTitle>
+                        </DialogHeader>
+                        <UserForm
+                            roles={props.roles}
+                            onSuccess={() => setModalOpen(false)}
+                        />
+                    </DialogContent>
+                </Dialog>
+            </div>
         </div>
     );
 }

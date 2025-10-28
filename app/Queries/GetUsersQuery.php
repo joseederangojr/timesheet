@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Queries;
 
-use App\DTOs\UserFilters;
+use App\Data\UserFilters;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -62,7 +62,7 @@ final readonly class GetUsersQuery
             })
             ->orderBy($sortBy, $sortDirection)
             ->paginate(
-                perPage: $filters->perPage ? (int) $filters->perPage : null,
+                perPage: (int) ($filters->perPage ?: 15),
             )
             ->withQueryString();
     }
