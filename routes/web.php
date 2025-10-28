@@ -57,4 +57,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function ():
         App\Http\Controllers\Admin\UsersController::class,
         'index',
     ])->name('users.index');
+
+    Route::get('/users/create', [
+        App\Http\Controllers\Admin\UsersController::class,
+        'create',
+    ])->name('users.create');
+
+    Route::post('/users', [
+        App\Http\Controllers\Admin\UsersController::class,
+        'store',
+    ])->name('users.store');
 });
