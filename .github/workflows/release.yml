@@ -2,11 +2,11 @@ name: release
 
 on:
   schedule:
-    - cron: '0 16 * * *' # Daily at 16:00 UTC (12AM Philippines time, UTC+8)
+    - cron: "0 16 * * *" # Daily at 16:00 UTC (12AM Philippines time, UTC+8)
   workflow_dispatch:
     inputs:
       force_release:
-        description: 'Force release even if tests fail'
+        description: "Force release even if tests fail"
         required: false
         default: false
         type: boolean
@@ -16,6 +16,7 @@ permissions:
   issues: write
   pull-requests: write
   id-token: write
+  actions: write
 
 jobs:
   release:
@@ -38,8 +39,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
-          cache: 'npm'
+          node-version: "24"
+          cache: "npm"
 
       - name: Get Composer Cache Directory
         id: composer-cache-dir
