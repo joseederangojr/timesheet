@@ -1,3 +1,22 @@
+## [1.2.0](https://github.com/tailoredstack/timesheet/compare/v1.1.0...v1.2.0) (2025-10-29)
+
+### Features
+
+* Add flash status message component to admin dashboard ([dce14a2](https://github.com/tailoredstack/timesheet/commit/dce14a219bdf1001fc9b45989a2d72cb80575903))
+* add React Compiler support ([8a37ab6](https://github.com/tailoredstack/timesheet/commit/8a37ab6cfd432154366d36d2cbb4c1c6a75e4325))
+* Add user creation backend functionality ([0b9db8d](https://github.com/tailoredstack/timesheet/commit/0b9db8d1c99b0c836d1f3f2d0652f87dd6b79f24))
+* Add user creation backend functionality ([58cdb76](https://github.com/tailoredstack/timesheet/commit/58cdb767f6ef88ff826b0f392310b885372d6055))
+* Add user creation frontend ([827e6da](https://github.com/tailoredstack/timesheet/commit/827e6da394b7ac81b2a7ac40534e4a90a5dd6ee3))
+* Add user creation frontend ([87ac3cc](https://github.com/tailoredstack/timesheet/commit/87ac3cc610c66f3aedddf5b6c08815d1ace28e2e))
+* Implement standardized flash message system ([fb325ca](https://github.com/tailoredstack/timesheet/commit/fb325ca3c1524f9490393678d625cc20362e1b84))
+* Update admin users functionality with flash message support ([f8816c3](https://github.com/tailoredstack/timesheet/commit/f8816c30b9ecc6c106549cf3e5379dcb9157a4bd))
+
+### Bug Fixes
+
+* Remove invalid JavaScript directives from data table components ([3425939](https://github.com/tailoredstack/timesheet/commit/342593951a9c2686335b511cd3373082f2261832))
+* resolve React Compiler compatibility issues ([81f15c7](https://github.com/tailoredstack/timesheet/commit/81f15c7946630e18cf5a93211a70e1fa8c8cff94))
+* resolve React Compiler compatibility issues ([cd99162](https://github.com/tailoredstack/timesheet/commit/cd991623e0a09014918e96418cd3237506e20f5a))
+
 ## [1.1.0](https://github.com/tailoredstack/timesheet/compare/v1.0.0...v1.1.0) (2025-10-28)
 
 ### Features
