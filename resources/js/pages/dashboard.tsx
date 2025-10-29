@@ -1,8 +1,8 @@
 import { AppLayout } from '@/components/layouts/app-layout';
 import { CardGrid, DashboardCard } from '@/components/ui/dashboard-cards';
+import { FlashStatusMessage } from '@/components/ui/flash-status-message';
 
 interface DashboardProps {
-    greeting?: string;
     auth: {
         user: {
             name: string;
@@ -11,15 +11,14 @@ interface DashboardProps {
     };
 }
 
-export default function Dashboard({ greeting, auth }: DashboardProps) {
+export default function Dashboard({ auth }: DashboardProps) {
     return (
         <AppLayout>
             <div className="mb-6">
-                {greeting && (
-                    <h1 className="text-3xl font-bold text-foreground">
-                        {greeting}
-                    </h1>
-                )}
+                <FlashStatusMessage className="mb-4" />
+                <h1 className="text-3xl font-bold text-foreground">
+                    Welcome back, {auth.user.name}
+                </h1>
                 <p className="text-muted-foreground">
                     Welcome to your dashboard
                 </p>

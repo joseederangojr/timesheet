@@ -41,8 +41,11 @@ final readonly class MagicLinkController
         $user->notify(new MagicLinkNotification($magicLinkUrl));
 
         return back()->with(
-            'message',
-            "We've sent a magic link to your email address. Please check your inbox.",
+            'status',
+            [
+                'type' => 'info',
+                'message' => "We've sent a magic link to your email address. Please check your inbox.",
+            ],
         );
     }
 
@@ -59,9 +62,15 @@ final readonly class MagicLinkController
         $greeting = $this->getUserGreetingQuery->handle($user);
 
         if ($this->checkUserIsAdminQuery->handle($user)) {
-            return to_route('admin.dashboard')->with('greeting', $greeting);
+            return to_route('admin.dashboard')->with('status', [
+                'type' => 'success',
+                'message' => $greeting,
+            ]);
         }
 
-        return to_route('dashboard')->with('greeting', $greeting);
+        return to_route('dashboard')->with('status', [
+            'type' => 'success',
+            'message' => $greeting,
+        ]);
     }
 }

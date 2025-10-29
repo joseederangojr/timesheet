@@ -32,10 +32,10 @@ it('sends magic link notification for existing user', function (): void {
     );
 
     $response->assertRedirect();
-    $response->assertSessionHas(
-        'message',
-        "We've sent a magic link to your email address. Please check your inbox.",
-    );
+    $response->assertSessionHas('status', [
+        'type' => 'info',
+        'message' => "We've sent a magic link to your email address. Please check your inbox.",
+    ]);
 
     Notification::assertSentTo($user, MagicLinkNotification::class);
 });
@@ -72,7 +72,10 @@ it('authenticates user with valid magic link', function (): void {
     $response = $this->get($signedUrl);
 
     $response->assertRedirect('/admin/dashboard');
-    $response->assertSessionHas('greeting', 'Hello, Admin User');
+    $response->assertSessionHas('status', [
+        'type' => 'success',
+        'message' => 'Hello, Admin User',
+    ]);
     $this->assertAuthenticatedAs($user);
 });
 
@@ -152,7 +155,10 @@ it(
         $response = $this->get($signedUrl);
 
         $response->assertRedirect('/dashboard');
-        $response->assertSessionHas('greeting', 'Welcome, Regular User');
+        $response->assertSessionHas('status', [
+            'type' => 'success',
+            'message' => 'Welcome, Regular User',
+        ]);
         $this->assertAuthenticatedAs($user);
     },
 );
@@ -174,6 +180,9 @@ it('greets employee user with Hi after magic link login', function (): void {
     $response = $this->get($signedUrl);
 
     $response->assertRedirect('/dashboard');
-    $response->assertSessionHas('greeting', 'Hi, Employee User');
+    $response->assertSessionHas('status', [
+        'type' => 'success',
+        'message' => 'Hi, Employee User',
+    ]);
     $this->assertAuthenticatedAs($user);
 });

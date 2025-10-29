@@ -57,7 +57,8 @@ it('can send magic link for existing user', function (): void {
 
     $page = visit('/login')
         ->fill('email', $user->email)
-        ->click('Send Magic Link');
+        ->click('Send Magic Link')
+        ->assertSee("We've sent a magic link to your email address. Please check your inbox.");
 
     Notification::assertSentTo($user, MagicLinkNotification::class);
 });

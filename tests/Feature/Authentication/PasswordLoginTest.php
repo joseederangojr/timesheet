@@ -33,7 +33,10 @@ it(
         );
 
         $response->assertRedirect('/admin/dashboard');
-        $response->assertSessionHas('greeting', 'Hello, Admin User');
+        $response->assertSessionHas('status', [
+            'type' => 'success',
+            'message' => 'Hello, Admin User',
+        ]);
         $this->assertAuthenticatedAs($user);
     },
 );
@@ -59,7 +62,10 @@ it(
         );
 
         $response->assertRedirect('/dashboard');
-        $response->assertSessionHas('greeting', 'Hi, Employee User');
+        $response->assertSessionHas('status', [
+            'type' => 'success',
+            'message' => 'Hi, Employee User',
+        ]);
         $this->assertAuthenticatedAs($user);
     },
 );

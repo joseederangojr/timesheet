@@ -155,3 +155,17 @@ it('handles system theme from theme cookie', function (): void {
 
     expect($shared['metadata']['theme'])->toBe('system');
 });
+
+it('shares status structure', function (): void {
+    $middleware = new HandleInertiaRequests();
+
+    $request = Request::create('/', 'GET');
+
+    $shared = $middleware->share($request);
+
+    expect($shared)->toHaveKey('status');
+
+    $status = $shared['status']();
+
+    expect($status)->toBeNull();
+});

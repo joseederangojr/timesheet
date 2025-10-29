@@ -1,23 +1,19 @@
 import { LoginForm } from '@/components/forms/login-form';
-import { MessageAlert } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
+import { FlashStatusMessage } from '@/components/ui/flash-status-message';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Key, Mail } from 'lucide-react';
 import { useState } from 'react';
 
-interface LoginProps {
-    message?: string;
-}
-
-export default function Login({ message }: LoginProps) {
+export default function Login() {
     const [usePassword, setUsePassword] = useState(false);
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardContent className="space-y-4 pt-6">
-                    {message && <MessageAlert message={message} />}
+                    <FlashStatusMessage className="mb-4" />
 
                     {usePassword ? (
                         <LoginForm
