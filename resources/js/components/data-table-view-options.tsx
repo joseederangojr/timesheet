@@ -1,21 +1,22 @@
-import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { Table } from '@tanstack/react-table';
-import { Settings2 } from 'lucide-react';
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Table } from "@tanstack/react-table";
+import { Settings2 } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 export function DataTableViewOptions<TData>({
     table,
 }: {
     table: Table<TData>;
 }) {
+    "no use memo";
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -31,7 +32,7 @@ export function DataTableViewOptions<TData>({
                     .getAllColumns()
                     .filter(
                         (column) =>
-                            typeof column.accessorFn !== 'undefined' &&
+                            typeof column.accessorFn !== "undefined" &&
                             column.getCanHide(),
                     )
                     .map((column) => {
