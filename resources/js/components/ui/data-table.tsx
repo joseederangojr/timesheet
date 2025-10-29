@@ -1,5 +1,3 @@
-"use client";
-"use no memo";
 import * as React from "react";
 import {
     Cell,
@@ -55,6 +53,7 @@ export function useDataTable<T>({
     actions,
     onPaginationChange,
 }: UseDataTableProps<T>) {
+    "no use memo";
     const [sortingState, setSortingState] =
         React.useState<SortingState>(sorting);
     const [columnVisibility, setColumnVisibility] =
@@ -66,7 +65,6 @@ export function useDataTable<T>({
             pageSize: pagination?.per_page ?? 10,
         });
 
-    // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable<T>({
         data,
         columns: enableRowSelection
@@ -188,6 +186,7 @@ interface DataTableProps<T> {
     table: ReturnType<typeof useDataTable<T>>;
 }
 export function DataTable<T>({ table }: DataTableProps<T>) {
+    "no use memo";
     return (
         <Table>
             <TableHeader>
