@@ -1,8 +1,8 @@
 import { AdminLayout } from '@/components/layouts/admin-layout';
 import { CardGrid, StatsCard } from '@/components/ui/dashboard-cards';
+import { FlashStatusMessage } from '@/components/ui/flash-status-message';
 
 interface AdminDashboardProps {
-    greeting?: string;
     auth: {
         user: {
             name: string;
@@ -11,16 +11,12 @@ interface AdminDashboardProps {
     };
 }
 
-export default function AdminDashboard({
-    greeting,
-    auth,
-}: AdminDashboardProps) {
+export default function AdminDashboard({ auth }: AdminDashboardProps) {
     return (
         <AdminLayout currentPath="/admin/dashboard">
             <div className="mb-6">
-                <h1 className="text-3xl font-bold">
-                    {greeting || `Hello, ${auth.user.name}`}
-                </h1>
+                <FlashStatusMessage className="mb-4" />
+                <h1 className="text-3xl font-bold">Hello, {auth.user.name}</h1>
                 <p className="text-muted-foreground">
                     Welcome to the admin dashboard
                 </p>
