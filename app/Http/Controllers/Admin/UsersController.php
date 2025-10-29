@@ -11,6 +11,7 @@ use App\Http\Requests\Admin\CreateUserRequest;
 use App\Queries\GetAllRolesQuery;
 use App\Queries\GetRolesByNamesQuery;
 use App\Queries\GetUsersQuery;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -53,20 +54,28 @@ final readonly class UsersController
         GetRolesByNamesQuery $getRolesByNamesQuery,
         CreateUser $createUser,
     ): RedirectResponse {
-        /** @var array{name: string, email: string, password: string, roles: string[]} $validated */
-        $validated = $request->validated();
+        try {
+            /** @var array{name: string, email: string, password: string, roles: string[]} $validated */
+            $validated = $request->validated();
 
-        $roles = $getRolesByNamesQuery->handle($validated['roles']);
+            $roles = $getRolesByNamesQuery->handle($validated['roles']);
 
-        $data = new CreateUserData(
-            name: $validated['name'],
-            email: $validated['email'],
-            password: $validated['password'],
-            roles: $roles,
-        );
+            $data = new CreateUserData(
+                name: $validated['name'],
+                email: $validated['email'],
+                password: $validated['password'],
+                roles: $roles,
+            );
 
-        $createUser->handle($data);
+            $createUser->handle($data);
 
-        return to_route('admin.users.index')->with('success', 'User created successfully.');
+            return to_route('admin.users.index')
+                ->with('status', ['type' => 'success', 'message' => __('User created successfully.')]);
+
+        } catch (Exception $e) {
+            return back()
+                ->withInput()
+                ->with('status', ['type' => 'error', 'message' => __('Failed to create user. Please try again.')]);
+        }
     }
 }
