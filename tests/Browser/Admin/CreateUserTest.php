@@ -27,13 +27,19 @@ describe('Admin Create User', function (): void {
         $this->actingAs($this->admin)
             ->visit('/admin/users')
             ->click('Add User')
-            ->wait(500)
+            ->waitForText('Create New User')
             ->type('name', 'New User Modal')
             ->type('email', 'modal@example.com')
             ->type('password', 'password123')
-            ->click('input[name="roles[]"][value="user"]')
+            ->press('Select roles...')
+            ->wait(0.5)
+            ->press('employee')
+            ->wait(0.5)
+            ->assertSee('employee')
             ->press('Create User')
+            ->wait(0.5)
             ->assertPathIs('/admin/users')
+            ->wait(0.5)
             ->assertSee('User created successfully.');
 
         $this->assertDatabaseHas('users', [
@@ -42,7 +48,7 @@ describe('Admin Create User', function (): void {
         ]);
 
         $newUser = User::query()->where('email', 'modal@example.com')->first();
-        expect($newUser->roles->pluck('name'))->toContain('user');
+        expect($newUser->roles->pluck('name'))->toContain('employee');
     });
 
     it('can create user via page', function (): void {
@@ -53,9 +59,15 @@ describe('Admin Create User', function (): void {
             ->type('name', 'New User Page')
             ->type('email', 'page@example.com')
             ->type('password', 'password123')
-            ->click('input[name="roles[]"][value="manager"]')
+            ->press('Select roles...')
+            ->wait(0.5)
+            ->press('admin')
+            ->wait(0.5)
+            ->assertSee('admin')
             ->press('Create User')
+            ->wait(0.5)
             ->assertPathIs('/admin/users')
+            ->wait(0.5)
             ->assertSee('User created successfully.');
 
         $this->assertDatabaseHas('users', [
@@ -64,7 +76,7 @@ describe('Admin Create User', function (): void {
         ]);
 
         $newUser = User::query()->where('email', 'page@example.com')->first();
-        expect($newUser->roles->pluck('name'))->toContain('manager');
+        expect($newUser->roles->pluck('name'))->toContain('admin');
     });
 
     it('requires admin authentication for modal', function (): void {

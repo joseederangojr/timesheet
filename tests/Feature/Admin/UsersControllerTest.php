@@ -351,7 +351,7 @@ describe('Admin Users Controller', function (): void {
 
             $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
 
-            expect($response)->assertRedirect('/admin/users')->assertSessionHas('success', 'User created successfully.');
+            expect($response)->assertRedirect('/admin/users')->assertSessionHas('status', ['type' => 'success', 'message' => 'User created successfully.']);
 
             $this->assertDatabaseHas('users', [
                 'name' => 'New User',
