@@ -142,7 +142,7 @@ jobs:
             # Install Node dependencies and build assets
             echo "🔨 Building assets..."
             source $SSH_NODE
-            npm install --prefer-cache
+            npm install --prefer-offline
             npm run build:ssr
 
             # Setup Laravel storage and cache links
