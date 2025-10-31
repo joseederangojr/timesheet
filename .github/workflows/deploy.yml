@@ -94,7 +94,7 @@ jobs:
 
             # Setup environment file
             echo "⚙️ Setting up environment..."
-            echo "APP_NAME=$APP_NAME" >> .env
+            echo "APP_NAME=\"$APP_NAME\"" >> .env
             echo "APP_ENV=$APP_ENV" >> .env
             echo "APP_KEY=$APP_KEY" >> .env
             echo "APP_DEBUG=$APP_DEBUG" >> .env
@@ -140,7 +140,7 @@ jobs:
 
             # Install Node dependencies and build assets
             echo "🔨 Building assets..."
-            eval $SSH_SECRET
+            eval "$SSH_SECRET"
 
             # Setup Laravel storage and cache links
             echo "🔗 Setting up Laravel links..."
