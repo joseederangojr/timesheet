@@ -22,7 +22,6 @@ jobs:
   release:
     runs-on: ubuntu-latest
     timeout-minutes: 45
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -110,51 +109,6 @@ jobs:
           php artisan test --bail --parallel --testsuite=Feature
           php artisan test --bail --parallel --testsuite=Browser
 
-      - name: Store Browser Screenshots
-        if: success() || failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: browser-screenshots-${{ github.run_id }}
-          path: |
-            tests/Browser/Screenshots
-            storage/logs
-            public/build
-          retention-days: 3
-
-      - name: Generate Build Hash
-        id: build-hash
-        run: |
-          echo "hash=$(find public/build -type f -exec sha256sum {} \; | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUT
-
-      - name: Cache Build Artifacts
-        uses: actions/cache@v4
-        with:
-          path: |
-            public/build
-            bootstrap/ssr
-            vendor
-            node_modules/.cache
-          key: ${{ runner.os }}-release-artifacts-${{ steps.build-hash.outputs.hash }}
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-artifacts-${{ github.run_id }}
-          path: |
-            app
-            boostrap
-            config
-            database
-            public
-            resources
-            routes
-            storage
-            composer.json
-            composer.lock
-            .env.example
-            artisan
-          retention-days: 1
-
       - name: Check if release is needed
         id: check
         env:
@@ -189,33 +143,3 @@ jobs:
             RELEASE_URL=$(grep -o 'https://github\.com[^[:space:]]*' release-output.txt | head -1)
             echo "release-url=$RELEASE_URL" >> $GITHUB_OUTPUT
           fi
-
-      - name: Upload Release Logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-logs-${{ github.run_id }}
-          path: release-output.txt
-          retention-days: 7
-
-      - name: Delete Build Artifacts
-        if: always()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.runId
-            });
-
-            for (const artifact of artifacts.data.artifacts) {
-              if (artifact.name.startsWith('release-artifacts-')) {
-                await github.rest.actions.deleteArtifact({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  artifact_id: artifact.id
-                });
-                console.log(`Deleted artifact: ${artifact.name}`);
-              }
-            }

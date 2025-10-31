@@ -40,13 +40,10 @@ final readonly class MagicLinkController
 
         $user->notify(new MagicLinkNotification($magicLinkUrl));
 
-        return back()->with(
-            'status',
-            [
-                'type' => 'info',
-                'message' => "We've sent a magic link to your email address. Please check your inbox.",
-            ],
-        );
+        return back()->with('status', [
+            'type' => 'info',
+            'message' => "We've sent a magic link to your email address. Please check your inbox.",
+        ]);
     }
 
     public function show(Request $request, User $user): RedirectResponse

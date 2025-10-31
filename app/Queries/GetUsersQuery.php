@@ -61,9 +61,7 @@ final readonly class GetUsersQuery
                 }
             })
             ->orderBy($sortBy, $sortDirection)
-            ->paginate(
-                perPage: (int) ($filters->perPage ?: 15),
-            )
+            ->paginate(perPage: (int) ($filters->perPage ?: 15))
             ->withQueryString();
     }
 }

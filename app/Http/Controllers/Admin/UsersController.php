@@ -69,13 +69,17 @@ final readonly class UsersController
 
             $createUser->handle($data);
 
-            return to_route('admin.users.index')
-                ->with('status', ['type' => 'success', 'message' => __('User created successfully.')]);
-
-        } catch (Exception $e) {
+            return to_route('admin.users.index')->with('status', [
+                'type' => 'success',
+                'message' => __('User created successfully.'),
+            ]);
+        } catch (Exception) {
             return back()
                 ->withInput()
-                ->with('status', ['type' => 'error', 'message' => __('Failed to create user. Please try again.')]);
+                ->with('status', [
+                    'type' => 'error',
+                    'message' => __('Failed to create user. Please try again.'),
+                ]);
         }
     }
 }

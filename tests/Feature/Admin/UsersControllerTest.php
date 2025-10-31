@@ -349,16 +349,25 @@ describe('Admin Users Controller', function (): void {
                 'roles' => ['user'],
             ];
 
-            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->post('/admin/users', $userData);
 
-            expect($response)->assertRedirect('/admin/users')->assertSessionHas('status', ['type' => 'success', 'message' => 'User created successfully.']);
+            expect($response)
+                ->assertRedirect('/admin/users')
+                ->assertSessionHas('status', [
+                    'type' => 'success',
+                    'message' => 'User created successfully.',
+                ]);
 
             $this->assertDatabaseHas('users', [
                 'name' => 'New User',
                 'email' => 'newuser@example.com',
             ]);
 
-            $newUser = User::query()->where('email', 'newuser@example.com')->first();
+            $newUser = User::query()
+                ->where('email', 'newuser@example.com')
+                ->first();
             expect($newUser)->not->toBeNull();
             expect($newUser->roles->pluck('name'))->toContain('user');
         });
@@ -372,7 +381,10 @@ describe('Admin Users Controller', function (): void {
                 'roles' => ['user'],
             ];
 
-            $response = $this->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+            $response = $this->withSession(['_token' => 'test-token'])->post(
+                '/admin/users',
+                $userData,
+            );
 
             expect($response)->assertRedirect('/login');
         });
@@ -389,7 +401,9 @@ describe('Admin Users Controller', function (): void {
                 'roles' => ['user'],
             ];
 
-            $response = $this->actingAs($employee)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+            $response = $this->actingAs($employee)
+                ->withSession(['_token' => 'test-token'])
+                ->post('/admin/users', $userData);
 
             expect($response)->assertForbidden();
         });
@@ -397,14 +411,18 @@ describe('Admin Users Controller', function (): void {
         it('validates required fields', function (): void {
             $userData = ['_token' => 'test-token'];
 
-            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->post('/admin/users', $userData);
 
-            expect($response)->assertRedirect()->assertSessionHasErrors([
-                'name',
-                'email',
-                'password',
-                'roles',
-            ]);
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHasErrors([
+                    'name',
+                    'email',
+                    'password',
+                    'roles',
+                ]);
         });
 
         it('validates email format', function (): void {
@@ -416,9 +434,13 @@ describe('Admin Users Controller', function (): void {
                 'roles' => ['user'],
             ];
 
-            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->post('/admin/users', $userData);
 
-            expect($response)->assertRedirect()->assertSessionHasErrors('email');
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHasErrors('email');
         });
 
         it('validates unique email', function (): void {
@@ -432,9 +454,13 @@ describe('Admin Users Controller', function (): void {
                 'roles' => ['user'],
             ];
 
-            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->post('/admin/users', $userData);
 
-            expect($response)->assertRedirect()->assertSessionHasErrors('email');
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHasErrors('email');
         });
 
         it('validates password minimum length', function (): void {
@@ -446,9 +472,13 @@ describe('Admin Users Controller', function (): void {
                 'roles' => ['user'],
             ];
 
-            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->post('/admin/users', $userData);
 
-            expect($response)->assertRedirect()->assertSessionHasErrors('password');
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHasErrors('password');
         });
 
         it('validates roles are required', function (): void {
@@ -460,9 +490,13 @@ describe('Admin Users Controller', function (): void {
                 'roles' => [],
             ];
 
-            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->post('/admin/users', $userData);
 
-            expect($response)->assertRedirect()->assertSessionHasErrors('roles');
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHasErrors('roles');
         });
 
         it('validates roles exist', function (): void {
@@ -474,9 +508,13 @@ describe('Admin Users Controller', function (): void {
                 'roles' => ['nonexistent'],
             ];
 
-            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->post('/admin/users', $userData);
 
-            expect($response)->assertRedirect()->assertSessionHasErrors('roles.0');
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHasErrors('roles.0');
         });
 
         it('assigns multiple roles correctly', function (): void {
@@ -491,12 +529,18 @@ describe('Admin Users Controller', function (): void {
                 'roles' => ['user', 'manager'],
             ];
 
-            $response = $this->actingAs($this->admin)->withSession(['_token' => 'test-token'])->post('/admin/users', $userData);
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->post('/admin/users', $userData);
 
             expect($response)->assertRedirect('/admin/users');
 
-            $newUser = User::query()->where('email', 'multi@example.com')->first();
-            expect($newUser->roles->pluck('name')->sort())->toEqual(collect(['user', 'manager'])->sort());
+            $newUser = User::query()
+                ->where('email', 'multi@example.com')
+                ->first();
+            expect($newUser->roles->pluck('name')->sort())->toEqual(
+                collect(['user', 'manager'])->sort(),
+            );
         });
     });
 });
