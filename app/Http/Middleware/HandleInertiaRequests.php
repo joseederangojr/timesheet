@@ -41,7 +41,7 @@ final class HandleInertiaRequests extends Middleware
                 'theme' => $request->cookie('theme') ?? 'system',
             ],
             'status' => fn () => $request->hasSession()
-                ? $request->session()->get('status', null)
+                ? $request->session()->get('status')
                 : null,
         ];
     }
