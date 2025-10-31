@@ -4,13 +4,10 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      tag:
-        description: "Tag to deploy (leave empty for latest release)"
-        required: false
-        type: string
+
 jobs:
   deploy:
+    environment: production
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -195,3 +192,4 @@ jobs:
 
             echo "✅ Deployment completed successfully!"
             echo "🌐 Your application should be available at your domain"
+            logout
