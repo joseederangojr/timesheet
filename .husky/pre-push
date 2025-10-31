@@ -13,3 +13,4 @@ composer update --lock
 git add composer.lock
 
 git diff --cached --name-only | xargs git add
+git commit --amend --no-edit
