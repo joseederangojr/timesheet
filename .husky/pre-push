@@ -2,7 +2,7 @@ npm run format
 npm run lint
 npm run test:types
 npm run build
-npm install --lock-file-only
+npm install
 git add package-lock.json
 
 vendor/bin/rector process
