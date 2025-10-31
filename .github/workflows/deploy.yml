@@ -20,7 +20,7 @@ jobs:
       - name: Deploy to via SSH
         uses: appleboy/ssh-action@v1.0.3
         env:
-          RELEASE_TAG: ${{ github.event.inputs.tag || github.event.release.tag_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
           SSH_DEPLOY_PATH: ${{ secrets.SSH_DEPLOY_PATH }}
           SSH_APP_PATH: ${{ secrets.SSH_APP_PATH }}
           GITHUB_REPOSITORY: ${{ github.repository }}
