@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/tailoredstack/timesheet/compare/v1.2.0...v1.3.0) (2025-10-31)
+
+### Features
+
+* add deploy workflow ([99a67cd](https://github.com/tailoredstack/timesheet/commit/99a67cd26ffa3e121a099a934305567dd7043115))
+
 ## [1.2.0](https://github.com/tailoredstack/timesheet/compare/v1.1.0...v1.2.0) (2025-10-29)
 
 ### Features
