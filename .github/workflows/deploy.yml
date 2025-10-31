@@ -142,7 +142,7 @@ jobs:
             # Install Node dependencies and build assets
             echo "🔨 Building assets..."
             source $SSH_NODE
-            npm install
+            npm install --prefer-cache
             npm run build:ssr
 
             # Setup Laravel storage and cache links
@@ -188,7 +188,7 @@ jobs:
 
             # Update current symlink
             echo "🔄 Updating current symlink..."
-            ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
+            ln -sfn $RELEASE_DIR $CURRENT_LINK
 
 
             # Clean up old releases (keep last 5)
