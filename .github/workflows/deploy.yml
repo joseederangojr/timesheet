@@ -178,7 +178,7 @@ jobs:
 
             echo "🔄 Restarting inertia ssr server"
             php artisan inertia:stop-ssr
-            php artisan inertia:start-ssr > storage/logs/inertia-ssr.log 2>&1 &
+            nohup php artisan inertia:start-ssr > storage/logs/inertia-ssr.log 2>&1 &
 
             # Update current symlink
             echo "🔄 Updating current symlink..."
