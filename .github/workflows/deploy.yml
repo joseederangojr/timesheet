@@ -76,10 +76,10 @@ jobs:
             echo "🚀 Starting deployment to $DEPLOY_PATH"
 
             # Create directory structure
-            mkdir -p "$DEPLOY_PATH/releases"
-            mkdir -p "$DEPLOY_PATH/shared/storage/{logs,framework}"
-            mkdir -p "$DEPLOY_PATH/shared/storage/framework/{cache,sessions,views}"
-            mkdir -p "$DEPLOY_PATH/shared/bootstrap/cache"
+            mkdir -p $DEPLOY_PATH/releases
+            mkdir -p $DEPLOY_PATH/shared/storage/logs
+            mkdir -p $DEPLOY_PATH/shared/storage/framework/{cache,sessions,views}
+            mkdir -p $DEPLOY_PATH/shared/bootstrap/cache
 
             # Create release directory
             mkdir -p "$RELEASE_DIR"
@@ -130,13 +130,13 @@ jobs:
 
             # Install PHP dependencies
             echo "📦 Installing PHP dependencies..."
-            composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+            composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev --quiet
 
             # Install Node dependencies and build assets
             echo "🔨 Building assets..."
             source $SSH_NODE
-            npm install --prefer-offline
-            npm run build:ssr
+            npm install --prefer-offline --silent
+            npm run build:ssr --silent
 
             # Setup Laravel storage and cache links
             echo "🔗 Setting up Laravel links..."
