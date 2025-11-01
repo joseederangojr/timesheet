@@ -177,12 +177,12 @@ jobs:
             php artisan view:cache
 
             echo "🔄 Restarting inertia ssr server"
-            php artisan inertia:stop-ssr
-            nohup php artisan inertia:start-ssr > storage/logs/inertia-ssr.log 2>&1 &
+            pkill -f "node bootstrap/ssr/ssr"
+            nohup node bootstrap/ssr/ssr > storage/logs/inertia-ssr.log 2>&1 &
 
             # Update current symlink
             echo "🔄 Updating current symlink..."
-            ln -sfn $RELEASE_DIR $CURRENT_LINK
+            ln -sfn $RELEASE_DIR/public $CURRENT_LINK
 
 
             # Clean up old releases (keep last 5)
