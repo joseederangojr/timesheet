@@ -130,7 +130,7 @@ jobs:
 
             # Install PHP dependencies
             echo "📦 Installing PHP dependencies..."
-            composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev --quiet
+            composer install --no-interaction --prefer-dist --optimize-autoloader --quiet
 
             # Install Node dependencies and build assets
             echo "🔨 Building assets..."
