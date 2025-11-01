@@ -1,3 +1,9 @@
+## [1.4.0](https://github.com/tailoredstack/timesheet/compare/v1.3.0...v1.4.0) (2025-11-01)
+
+### Features
+
+* workaround for server ([e6e15a2](https://github.com/tailoredstack/timesheet/commit/e6e15a21f98a3a15fc64ec80db9bba9cb37640f3))
+
 ## [1.3.0](https://github.com/tailoredstack/timesheet/compare/v1.2.0...v1.3.0) (2025-10-31)
 
 ### Features
