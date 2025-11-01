@@ -135,9 +135,8 @@ jobs:
 
             # Install Node dependencies and build assets
             echo "🔨 Building assets..."
-            source $SSH_NODE
-            npm install --prefer-offline --silent
-            npm run build:ssr --silent
+            bun install --silent
+            bunx --bun vite build -l silent && bunx --bun vite build --ssr -l silent
 
             # Setup Laravel storage and cache links
             echo "🔗 Setting up Laravel links..."
@@ -178,8 +177,7 @@ jobs:
             php artisan view:cache
 
             echo "🔄 Restarting inertia ssr server"
-            pkill -f "node bootstrap/ssr/ssr"
-            nohup node bootstrap/ssr/ssr > storage/logs/inertia-ssr.log 2>&1 &
+            nohup php artisan inertia:start-ssr --runtime=bun > storage/logs/inertia-ssr.log 2>&1 &
 
             # Update current symlink
             echo "🔄 Updating current symlink..."
