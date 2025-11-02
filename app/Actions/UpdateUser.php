@@ -12,7 +12,7 @@ final readonly class UpdateUser
 {
     public function handle(UpdateUserData $data): User
     {
-        return DB::transaction(function () use ($data) {
+        return DB::transaction(function () use ($data): User {
             $data->user->update([
                 'name' => $data->name,
                 'email' => $data->email,
@@ -20,7 +20,7 @@ final readonly class UpdateUser
 
             $data->user->roles()->sync($data->roles->pluck('id'));
 
-            return $data->user->fresh(['roles']);
+            return $data->user->load('roles');
         });
     }
 }
