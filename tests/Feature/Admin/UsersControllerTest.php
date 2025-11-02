@@ -337,6 +337,410 @@ describe('Admin Users Controller', function (): void {
         });
     });
 
+    describe('create', function (): void {
+        it(
+            'displays create user form for authenticated admin',
+            function (): void {
+                $response = $this->actingAs($this->admin)->get(
+                    '/admin/users/create',
+                );
+
+                expect($response)
+                    ->assertSuccessful()
+                    ->assertInertia(
+                        fn ($page) => $page
+                            ->component('admin/users/create')
+                            ->has('roles'),
+                    );
+            },
+        );
+
+        it('requires authentication to access create form', function (): void {
+            $response = $this->get('/admin/users/create');
+
+            expect($response)->assertRedirect('/login');
+        });
+
+        it('requires admin role to access create form', function (): void {
+            $employee = User::factory()->create();
+            $employee->roles()->attach($this->employeeRole);
+
+            $response = $this->actingAs($employee)->get('/admin/users/create');
+
+            expect($response)->assertForbidden();
+        });
+    });
+
+    describe('show', function (): void {
+        it('displays user details for authenticated admin', function (): void {
+            $user = User::factory()->create([
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+            ]);
+            $user->roles()->attach($this->employeeRole);
+
+            $response = $this->actingAs($this->admin)->get(
+                '/admin/users/'.$user->id,
+            );
+
+            expect($response)
+                ->assertSuccessful()
+                ->assertInertia(
+                    fn ($page) => $page
+                        ->component('admin/users/show')
+                        ->has('user')
+                        ->where('user.name', 'Test User')
+                        ->where('user.email', 'test@example.com')
+                        ->has('user.roles', 1)
+                        ->where('user.roles.0.name', 'employee'),
+                );
+        });
+
+        it('requires authentication to view user details', function (): void {
+            $user = User::factory()->create();
+
+            $response = $this->get('/admin/users/'.$user->id);
+
+            expect($response)->assertRedirect('/login');
+        });
+
+        it('requires admin role to view user details', function (): void {
+            $employee = User::factory()->create();
+            $employee->roles()->attach($this->employeeRole);
+            $user = User::factory()->create();
+
+            $response = $this->actingAs($employee)->get(
+                '/admin/users/'.$user->id,
+            );
+
+            expect($response)->assertForbidden();
+        });
+
+        it('returns 404 for non-existent user', function (): void {
+            $response = $this->actingAs($this->admin)->get(
+                '/admin/users/99999',
+            );
+
+            expect($response)->assertNotFound();
+        });
+    });
+
+    describe('edit', function (): void {
+        it(
+            'displays edit user form for authenticated admin',
+            function (): void {
+                $user = User::factory()->create([
+                    'name' => 'Edit Test User',
+                    'email' => 'edit@example.com',
+                ]);
+                $user->roles()->attach($this->employeeRole);
+
+                $response = $this->actingAs($this->admin)->get(
+                    sprintf('/admin/users/%s/edit', $user->id),
+                );
+
+                expect($response)
+                    ->assertSuccessful()
+                    ->assertInertia(
+                        fn ($page) => $page
+                            ->component('admin/users/edit')
+                            ->has('user')
+                            ->where('user.name', 'Edit Test User')
+                            ->where('user.email', 'edit@example.com')
+                            ->has('user.roles', 1)
+                            ->where('user.roles.0.name', 'employee')
+                            ->has('roles'),
+                    );
+            },
+        );
+
+        it('requires authentication to access edit form', function (): void {
+            $user = User::factory()->create();
+
+            $response = $this->get(sprintf('/admin/users/%s/edit', $user->id));
+
+            expect($response)->assertRedirect('/login');
+        });
+
+        it('requires admin role to access edit form', function (): void {
+            $employee = User::factory()->create();
+            $employee->roles()->attach($this->employeeRole);
+            $user = User::factory()->create();
+
+            $response = $this->actingAs($employee)->get(
+                sprintf('/admin/users/%s/edit', $user->id),
+            );
+
+            expect($response)->assertForbidden();
+        });
+
+        it('returns 404 for non-existent user in edit', function (): void {
+            $response = $this->actingAs($this->admin)->get(
+                '/admin/users/99999/edit',
+            );
+
+            expect($response)->assertNotFound();
+        });
+    });
+
+    describe('update', function (): void {
+        it('updates user successfully', function (): void {
+            $user = User::factory()->create([
+                'name' => 'Original Name',
+                'email' => 'original@example.com',
+            ]);
+            $user->roles()->attach($this->employeeRole);
+
+            $updateData = [
+                '_token' => 'test-token',
+                'name' => 'Updated Name',
+                'email' => 'updated@example.com',
+                'roles' => ['admin'],
+            ];
+
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->put('/admin/users/'.$user->id, $updateData);
+
+            expect($response)
+                ->assertRedirect('/admin/users')
+                ->assertSessionHas('status', [
+                    'type' => 'success',
+                    'message' => 'User updated successfully.',
+                ]);
+
+            $user->refresh();
+            expect($user->name)->toBe('Updated Name');
+            expect($user->email)->toBe('updated@example.com');
+            expect($user->roles->pluck('name'))->toContain('admin');
+            expect($user->roles->pluck('name'))->not->toContain('employee');
+        });
+
+        it('requires authentication to update users', function (): void {
+            $user = User::factory()->create();
+
+            $updateData = [
+                '_token' => 'test-token',
+                'name' => 'Updated Name',
+                'email' => 'updated@example.com',
+                'roles' => ['admin'],
+            ];
+
+            $response = $this->withSession(['_token' => 'test-token'])->put(
+                '/admin/users/'.$user->id,
+                $updateData,
+            );
+
+            expect($response)->assertRedirect('/login');
+        });
+
+        it('requires admin role to update users', function (): void {
+            $employee = User::factory()->create();
+            $employee->roles()->attach($this->employeeRole);
+            $user = User::factory()->create();
+
+            $updateData = [
+                '_token' => 'test-token',
+                'name' => 'Updated Name',
+                'email' => 'updated@example.com',
+                'roles' => ['admin'],
+            ];
+
+            $response = $this->actingAs($employee)
+                ->withSession(['_token' => 'test-token'])
+                ->put('/admin/users/'.$user->id, $updateData);
+
+            expect($response)->assertForbidden();
+        });
+
+        it('validates required fields for update', function (): void {
+            $user = User::factory()->create();
+
+            $updateData = ['_token' => 'test-token'];
+
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->put('/admin/users/'.$user->id, $updateData);
+
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHasErrors(['name', 'email', 'roles']);
+        });
+
+        it('validates email format for update', function (): void {
+            $user = User::factory()->create();
+
+            $updateData = [
+                '_token' => 'test-token',
+                'name' => 'Updated Name',
+                'email' => 'invalid-email',
+                'roles' => ['admin'],
+            ];
+
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->put('/admin/users/'.$user->id, $updateData);
+
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHasErrors('email');
+        });
+
+        it('validates unique email excluding current user', function (): void {
+            $user = User::factory()->create(['email' => 'user@example.com']);
+            $otherUser = User::factory()->create([
+                'email' => 'other@example.com',
+            ]);
+
+            $updateData = [
+                '_token' => 'test-token',
+                'name' => 'Updated Name',
+                'email' => 'other@example.com', // Same as other user
+                'roles' => ['admin'],
+            ];
+
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->put('/admin/users/'.$user->id, $updateData);
+
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHasErrors('email');
+        });
+
+        it('allows updating to same email for same user', function (): void {
+            $user = User::factory()->create([
+                'name' => 'Original Name',
+                'email' => 'user@example.com',
+            ]);
+
+            $updateData = [
+                '_token' => 'test-token',
+                'name' => 'Updated Name',
+                'email' => 'user@example.com', // Same email
+                'roles' => ['admin'],
+            ];
+
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->put('/admin/users/'.$user->id, $updateData);
+
+            expect($response)->assertRedirect('/admin/users');
+
+            $user->refresh();
+            expect($user->name)->toBe('Updated Name');
+            expect($user->email)->toBe('user@example.com');
+        });
+
+        it('validates roles are required for update', function (): void {
+            $user = User::factory()->create();
+
+            $updateData = [
+                '_token' => 'test-token',
+                'name' => 'Updated Name',
+                'email' => 'updated@example.com',
+                'roles' => [],
+            ];
+
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->put('/admin/users/'.$user->id, $updateData);
+
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHasErrors('roles');
+        });
+
+        it('validates roles exist for update', function (): void {
+            $user = User::factory()->create();
+
+            $updateData = [
+                '_token' => 'test-token',
+                'name' => 'Updated Name',
+                'email' => 'updated@example.com',
+                'roles' => ['nonexistent'],
+            ];
+
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->put('/admin/users/'.$user->id, $updateData);
+
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHasErrors('roles.0');
+        });
+
+        it('updates user roles correctly', function (): void {
+            $user = User::factory()->create();
+            $user->roles()->attach($this->employeeRole);
+
+            $managerRole = Role::factory()->create(['name' => 'manager']);
+
+            $updateData = [
+                '_token' => 'test-token',
+                'name' => 'Role Updated User',
+                'email' => 'role@example.com',
+                'roles' => ['admin', 'manager'],
+            ];
+
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->put('/admin/users/'.$user->id, $updateData);
+
+            expect($response)->assertRedirect('/admin/users');
+
+            $user->refresh();
+            expect($user->roles->pluck('name')->sort())->toEqual(
+                collect(['admin', 'manager'])->sort(),
+            );
+        });
+
+        it('returns 404 for non-existent user in update', function (): void {
+            $updateData = [
+                '_token' => 'test-token',
+                'name' => 'Updated Name',
+                'email' => 'updated@example.com',
+                'roles' => ['admin'],
+            ];
+
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->put('/admin/users/99999', $updateData);
+
+            expect($response)->assertNotFound();
+        });
+
+        it('handles exceptions during user update', function (): void {
+            $user = User::factory()->create([
+                'name' => 'Original Name',
+                'email' => 'original@example.com',
+            ]);
+
+            // Add a model event listener that throws an exception during update
+            User::updating(function () {
+                throw new Exception('Database error');
+            });
+
+            $updateData = [
+                '_token' => 'test-token',
+                'name' => 'Updated Name',
+                'email' => 'updated@example.com',
+                'roles' => ['admin'],
+            ];
+
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->put("/admin/users/{$user->id}", $updateData);
+
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHas('status', [
+                    'type' => 'error',
+                    'message' => 'Failed to update user. Please try again.',
+                ]);
+        });
+    });
+
     describe('store', function (): void {
         it('creates a new user successfully', function (): void {
             $userRole = Role::factory()->create(['name' => 'user']);
@@ -541,6 +945,34 @@ describe('Admin Users Controller', function (): void {
             expect($newUser->roles->pluck('name')->sort())->toEqual(
                 collect(['user', 'manager'])->sort(),
             );
+        });
+
+        it('handles exceptions during user creation', function (): void {
+            $userRole = Role::factory()->create(['name' => 'user']);
+
+            // Add a model event listener that throws an exception during creation
+            User::creating(function () {
+                throw new Exception('Database error');
+            });
+
+            $userData = [
+                '_token' => 'test-token',
+                'name' => 'Exception User',
+                'email' => 'exception@example.com',
+                'password' => 'password123',
+                'roles' => ['user'],
+            ];
+
+            $response = $this->actingAs($this->admin)
+                ->withSession(['_token' => 'test-token'])
+                ->post('/admin/users', $userData);
+
+            expect($response)
+                ->assertRedirect()
+                ->assertSessionHas('status', [
+                    'type' => 'error',
+                    'message' => 'Failed to create user. Please try again.',
+                ]);
         });
     });
 });
