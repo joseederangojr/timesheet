@@ -65,7 +65,6 @@ export function useDataTable<T>({
             pageSize: pagination?.per_page ?? 10,
         });
 
-     
     const table = useReactTable<T>({
         data,
         columns: enableRowSelection

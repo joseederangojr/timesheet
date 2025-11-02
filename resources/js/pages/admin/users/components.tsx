@@ -5,17 +5,8 @@ import { DataTablePagination } from '@/components/data-table-pagination';
 import { DataTableViewOptions } from '@/components/data-table-view-options';
 import { SearchInput } from '@/components/search-input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-} from '@/components/ui/command';
 import {
     DataTable,
     DataTableContent,
@@ -31,22 +22,15 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
+
 import { Paginated } from '@/types';
-import { Form, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import {
     ColumnDef,
     PaginationState,
     SortingState,
 } from '@tanstack/react-table';
-import { Check, ChevronsUpDown, Edit, Plus, X } from 'lucide-react';
+import { Edit, Plus } from 'lucide-react';
 import * as React from 'react';
 
 interface User {
@@ -374,184 +358,15 @@ interface UserEditDialogProps {
 }
 
 function UserEditDialog({ user }: UserEditDialogProps) {
-    const [open, setOpen] = React.useState(false);
-
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button variant="ghost" size="sm">
-                    <Edit className="h-4 w-4" />
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                    <DialogTitle>Edit User</DialogTitle>
-                </DialogHeader>
-                <UserEditForm user={user} onSuccess={() => setOpen(false)} />
-            </DialogContent>
-        </Dialog>
-    );
-}
-
-interface UserEditFormProps {
-    user: User;
-    onSuccess?: () => void;
-}
-
-function UserEditForm({ user, onSuccess }: UserEditFormProps) {
-    const { props } = usePage<{ roles: Role[] }>();
-    const [selectedRoles, setSelectedRoles] = React.useState<string[]>(
-        user.roles.map((role) => role.name),
-    );
-    const [open, setOpen] = React.useState(false);
-
-    const toggleRole = (roleName: string) => {
-        setSelectedRoles((prev) =>
-            prev.includes(roleName)
-                ? prev.filter((r) => r !== roleName)
-                : [...prev, roleName],
-        );
-    };
-
-    const removeRole = (roleName: string) => {
-        setSelectedRoles((prev) => prev.filter((r) => r !== roleName));
-    };
-
-    return (
-        <Form
-            method="put"
-            action={`/admin/users/${user.id}`}
-            onSuccess={() => {
-                onSuccess?.();
-            }}
-            className="space-y-6"
+        <Link
+            href={`/admin/users/${user.id}/edit`}
+            data-testid={`edit-user-${user.id}`}
         >
-            {({ errors }) => (
-                <>
-                    <div>
-                        <Label htmlFor="name">Name</Label>
-                        <Input
-                            id="name"
-                            name="name"
-                            placeholder="Enter user name"
-                            defaultValue={user.name}
-                            required
-                        />
-                        {errors.name && (
-                            <p className="mt-1 text-sm text-red-600">
-                                {errors.name}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                            id="email"
-                            name="email"
-                            type="email"
-                            placeholder="Enter email address"
-                            defaultValue={user.email}
-                            required
-                        />
-                        {errors.email && (
-                            <p className="mt-1 text-sm text-red-600">
-                                {errors.email}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <Label>Roles</Label>
-                        <Popover open={open} onOpenChange={setOpen}>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    aria-expanded={open}
-                                    className="w-full justify-between"
-                                >
-                                    {selectedRoles.length > 0
-                                        ? `${selectedRoles.length} role(s) selected`
-                                        : 'Select roles...'}
-                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-full p-0">
-                                <Command>
-                                    <CommandInput placeholder="Search roles..." />
-                                    <CommandList>
-                                        <CommandEmpty>
-                                            No roles found.
-                                        </CommandEmpty>
-                                        <CommandGroup>
-                                            {props.roles.map((role) => (
-                                                <CommandItem
-                                                    key={role.id}
-                                                    onSelect={() =>
-                                                        toggleRole(role.name)
-                                                    }
-                                                >
-                                                    <Check
-                                                        className={cn(
-                                                            'mr-2 h-4 w-4',
-                                                            selectedRoles.includes(
-                                                                role.name,
-                                                            )
-                                                                ? 'opacity-100'
-                                                                : 'opacity-0',
-                                                        )}
-                                                    />
-                                                    {role.name}
-                                                </CommandItem>
-                                            ))}
-                                        </CommandGroup>
-                                    </CommandList>
-                                </Command>
-                            </PopoverContent>
-                        </Popover>
-                        {selectedRoles.length > 0 && (
-                            <div className="mt-2 flex flex-wrap gap-2">
-                                {selectedRoles.map((roleName) => (
-                                    <Badge
-                                        key={roleName}
-                                        variant="secondary"
-                                        className="flex items-center gap-1"
-                                    >
-                                        {roleName}
-                                        <button
-                                            type="button"
-                                            onClick={() => removeRole(roleName)}
-                                            className="ml-1 rounded-full p-0.5 hover:bg-secondary-foreground/20"
-                                        >
-                                            <X className="h-3 w-3" />
-                                        </button>
-                                    </Badge>
-                                ))}
-                            </div>
-                        )}
-                        {errors.roles && (
-                            <p className="mt-1 text-sm text-red-600">
-                                {errors.roles}
-                            </p>
-                        )}
-                        {/* Hidden inputs for selected roles */}
-                        {selectedRoles.map((roleName) => (
-                            <input
-                                key={roleName}
-                                type="hidden"
-                                name="roles[]"
-                                value={roleName}
-                            />
-                        ))}
-                    </div>
-
-                    <div className="flex justify-end">
-                        <Button type="submit">Update User</Button>
-                    </div>
-                </>
-            )}
-        </Form>
+            <Button variant="ghost" size="sm">
+                <Edit className="h-4 w-4" />
+            </Button>
+        </Link>
     );
 }
 

@@ -252,3 +252,54 @@ it('displays joined date formatted', function (): void {
     $formattedDate = now()->subDays(5)->format('M j, Y');
     $page->assertSee($formattedDate);
 });
+
+it('displays edit user page', function (): void {
+    $adminRole = resolve(FindRoleByNameQuery::class)->handle('admin');
+
+    $admin = User::factory()->hasAttached($adminRole)->create();
+
+    $user = User::factory()->create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+    ]);
+
+    $this->actingAs($admin);
+
+    $page = visit('/admin/users/'.$user->id.'/edit');
+
+    $page->assertSee('Edit User')
+        ->assertSee('Update user information and role assignments.');
+});
+
+it('can update user information', function (): void {
+    $adminRole = resolve(FindRoleByNameQuery::class)->handle('admin');
+    $employeeRole = resolve(FindRoleByNameQuery::class)->handle('employee');
+
+    $admin = User::factory()->hasAttached($adminRole)->create();
+
+    $user = User::factory()->create([
+        'name' => 'Original Name',
+        'email' => 'original@example.com',
+    ]);
+
+    $this->actingAs($admin);
+
+    $page = visit('/admin/users/'.$user->id.'/edit');
+
+    // Fill out the form and select a role
+    $page->fill('name', 'Updated Name')
+        ->fill('email', 'updated@example.com')
+        ->click('Select roles...') // Open the role dropdown
+        ->click('employee') // Select employee role
+        ->click('Update User');
+
+    // Should redirect back to users index with success message
+    $page->assertPathIs('/admin/users')
+        ->assertSee('User updated successfully.');
+
+    // Verify the user was updated in the database
+    $user->refresh();
+    expect($user->name)->toBe('Updated Name');
+    expect($user->email)->toBe('updated@example.com');
+    expect($user->roles->pluck('name')->toArray())->toContain('employee');
+});
