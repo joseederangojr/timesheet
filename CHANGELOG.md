@@ -1,3 +1,14 @@
+## [1.5.0](https://github.com/tailoredstack/timesheet/compare/v1.4.0...v1.5.0) (2025-11-02)
+
+### Features
+
+* add user editing routes and controller methods ([78730dd](https://github.com/tailoredstack/timesheet/commit/78730dd183a8d252270a058f494bcdf68ec3c7a9))
+* add user update functionality ([7b7ef77](https://github.com/tailoredstack/timesheet/commit/7b7ef77cb9a89d8267acafb2222a4a295b7b1a07))
+
+### Bug Fixes
+
+* resolve PHPStan return type error in UpdateUser action ([f10f792](https://github.com/tailoredstack/timesheet/commit/f10f792275235bc512a7d3fbf3537f50e543f1c9))
+
 ## [1.4.0](https://github.com/tailoredstack/timesheet/compare/v1.3.0...v1.4.0) (2025-11-01)
 
 ### Features
