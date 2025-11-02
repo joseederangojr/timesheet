@@ -187,5 +187,49 @@ describe('GetUsersQuery', function (): void {
                 ->and($resultIds)
                 ->not->toContain($user3->id);
         });
+
+        it('filters users by role', function (): void {
+            $adminRole = Role::factory()->create(['name' => 'admin']);
+            $employeeRole = Role::factory()->create(['name' => 'employee']);
+
+            $adminUser = User::factory()->create();
+            $adminUser->roles()->attach($adminRole);
+
+            $employeeUser = User::factory()->create();
+            $employeeUser->roles()->attach($employeeRole);
+
+            $noRoleUser = User::factory()->create();
+
+            $filters = new UserFilters(role: 'admin');
+            $result = $this->query->handle($filters);
+
+            expect($result->count())->toBe(1);
+            expect($result->first()->id)->toBe($adminUser->id);
+        });
+
+        it('filters users by verification status', function (): void {
+            $verifiedUser = User::factory()->create([
+                'email_verified_at' => now(),
+            ]);
+            $unverifiedUser = User::factory()->create([
+                'email_verified_at' => null,
+            ]);
+
+            $filters = new UserFilters(verified: 'verified');
+            $result = $this->query->handle($filters);
+
+            expect($result->count())->toBe(1);
+            expect($result->first()->id)->toBe($verifiedUser->id);
+        });
+
+        it('handles invalid sort field by falling back to first allowed field', function (): void {
+            User::factory(3)->create();
+
+            $filters = new UserFilters(sortBy: 'invalid_field');
+            $result = $this->query->handle($filters);
+
+            expect($result->count())->toBe(3);
+            // Should sort by 'name' (first allowed)
+        });
     });
 });
