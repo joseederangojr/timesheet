@@ -33,3 +33,4 @@ coverage*/*
 .opencode
 commit.sh
 COMMIT.md
+.vercel

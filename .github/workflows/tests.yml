@@ -75,8 +75,8 @@ jobs:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
         run: |
-          composer install --no-interaction --prefer-dist --optimize-autoloader
-          npm ci
+          composer install --no-interaction --prefer-dist --optimize-autoloader --quiet
+          npm install --prefer-offline --silent
           cp .env.example .env
           rm .env.testing
           php artisan key:generate
@@ -108,4 +108,4 @@ jobs:
             storage/logs
             public/build
 
-          retention-days: 3
+          retention-days: 1

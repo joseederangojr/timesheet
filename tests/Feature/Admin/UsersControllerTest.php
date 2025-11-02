@@ -717,7 +717,7 @@ describe('Admin Users Controller', function (): void {
             ]);
 
             // Add a model event listener that throws an exception during update
-            User::updating(function () {
+            User::updating(function (): void {
                 throw new Exception('Database error');
             });
 
@@ -730,7 +730,7 @@ describe('Admin Users Controller', function (): void {
 
             $response = $this->actingAs($this->admin)
                 ->withSession(['_token' => 'test-token'])
-                ->put("/admin/users/{$user->id}", $updateData);
+                ->put('/admin/users/'.$user->id, $updateData);
 
             expect($response)
                 ->assertRedirect()
@@ -951,7 +951,7 @@ describe('Admin Users Controller', function (): void {
             $userRole = Role::factory()->create(['name' => 'user']);
 
             // Add a model event listener that throws an exception during creation
-            User::creating(function () {
+            User::creating(function (): void {
                 throw new Exception('Database error');
             });
 
