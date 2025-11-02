@@ -11,12 +11,12 @@ it('can toggle admin sidebar', function (): void {
     $this->actingAs($admin)
         ->withCookie('sidebar', '1')
         ->visit('/admin/dashboard')
-        ->wait(0.5)
+        ->wait(0.1)
         ->assertSee('Users')
         ->click('button[aria-label="Collapse sidebar"]')
-        ->wait(0.5)
+        ->wait(0.1)
         ->assertSee('Admin Panel')
         ->click('button[aria-label="Expand sidebar"]')
-        ->wait(0.5)
+        ->wait(0.1)
         ->assertSee('Users');
 });

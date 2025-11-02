@@ -32,14 +32,14 @@ describe('Admin Create User', function (): void {
             ->type('email', 'modal@example.com')
             ->type('password', 'password123')
             ->press('Select roles...')
-            ->wait(0.5)
+            ->wait(0.1)
             ->press('employee')
-            ->wait(0.5)
+            ->wait(0.1)
             ->assertSee('employee')
             ->press('Create User')
-            ->wait(0.5)
+            ->wait(0.1)
             ->assertPathIs('/admin/users')
-            ->wait(0.5)
+            ->wait(0.1)
             ->assertSee('User created successfully.');
 
         $this->assertDatabaseHas('users', [
@@ -60,14 +60,14 @@ describe('Admin Create User', function (): void {
             ->type('email', 'page@example.com')
             ->type('password', 'password123')
             ->press('Select roles...')
-            ->wait(0.5)
+            ->wait(0.1)
             ->press('admin')
-            ->wait(0.5)
+            ->wait(0.1)
             ->assertSee('admin')
             ->press('Create User')
-            ->wait(0.5)
+            ->wait(0.1)
             ->assertPathIs('/admin/users')
-            ->wait(0.5)
+            ->wait(0.1)
             ->assertSee('User created successfully.');
 
         $this->assertDatabaseHas('users', [
