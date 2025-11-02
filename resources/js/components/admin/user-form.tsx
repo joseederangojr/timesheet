@@ -1,5 +1,5 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
     Command,
     CommandEmpty,
@@ -7,19 +7,19 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from '@/components/ui/command';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from '@/components/ui/popover';
-import { useFormDefaults } from '@/hooks/use-form-defaults';
-import { cn } from '@/lib/utils';
-import { Form } from '@inertiajs/react';
-import { Check, ChevronsUpDown, X } from 'lucide-react';
-import { useState } from 'react';
+} from "@/components/ui/popover";
+import { useFormDefaults } from "@/hooks/use-form-defaults";
+import { cn } from "@/lib/utils";
+import { Form } from "@inertiajs/react";
+import { Check, ChevronsUpDown, X } from "lucide-react";
+import { useState } from "react";
 
 interface Role {
     id: number;
@@ -33,8 +33,8 @@ interface UserFormProps {
 
 export function UserForm({ roles, onSuccess }: UserFormProps) {
     const formDefaults = useFormDefaults({
-        name: '',
-        email: '',
+        name: "",
+        email: "",
         roles: [] as string[],
     });
 
@@ -84,7 +84,6 @@ export function UserForm({ roles, onSuccess }: UserFormProps) {
                     type="email"
                     placeholder="Enter email address"
                     defaultValue={formDefaults.email}
-                    required
                 />
             </div>
 
@@ -100,7 +99,7 @@ export function UserForm({ roles, onSuccess }: UserFormProps) {
                         >
                             {selectedRoles.length > 0
                                 ? `${selectedRoles.length} role(s) selected`
-                                : 'Select roles...'}
+                                : "Select roles..."}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                     </PopoverTrigger>
@@ -119,12 +118,12 @@ export function UserForm({ roles, onSuccess }: UserFormProps) {
                                         >
                                             <Check
                                                 className={cn(
-                                                    'mr-2 h-4 w-4',
+                                                    "mr-2 h-4 w-4",
                                                     selectedRoles.includes(
                                                         role.name,
                                                     )
-                                                        ? 'opacity-100'
-                                                        : 'opacity-0',
+                                                        ? "opacity-100"
+                                                        : "opacity-0",
                                                 )}
                                             />
                                             {role.name}
@@ -271,7 +270,7 @@ export function UserEditForm({ user, roles, onSuccess }: UserEditFormProps) {
                                 >
                                     {selectedRoles.length > 0
                                         ? `${selectedRoles.length} role(s) selected`
-                                        : 'Select roles...'}
+                                        : "Select roles..."}
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
@@ -292,12 +291,12 @@ export function UserEditForm({ user, roles, onSuccess }: UserEditFormProps) {
                                                 >
                                                     <Check
                                                         className={cn(
-                                                            'mr-2 h-4 w-4',
+                                                            "mr-2 h-4 w-4",
                                                             selectedRoles.includes(
                                                                 role.name,
                                                             )
-                                                                ? 'opacity-100'
-                                                                : 'opacity-0',
+                                                                ? "opacity-100"
+                                                                : "opacity-0",
                                                         )}
                                                     />
                                                     {role.name}

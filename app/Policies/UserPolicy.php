@@ -5,14 +5,9 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Models\User;
-use App\Queries\CheckUserIsAdminQuery;
 
-final readonly class UserPolicy
+final class UserPolicy
 {
-    public function __construct(
-        private CheckUserIsAdminQuery $checkUserIsAdminQuery,
-    ) {}
-
     /**
      * Determine whether the user can view any models.
      */
@@ -71,6 +66,6 @@ final readonly class UserPolicy
 
     private function isAdmin(User $user): bool
     {
-        return $this->checkUserIsAdminQuery->handle($user);
+        return app(\App\Queries\CheckUserIsAdminQuery::class)->handle($user);
     }
 }
