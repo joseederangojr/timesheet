@@ -12,6 +12,7 @@ use App\Data\UserFilters;
 use App\Http\Requests\Admin\CreateUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\User;
+use App\Queries\CheckUserIsAdminQuery;
 use App\Queries\GetAllRolesQuery;
 use App\Queries\GetRolesByNamesQuery;
 use App\Queries\GetUsersQuery;
@@ -27,7 +28,11 @@ final readonly class UsersController
         Request $request,
         GetUsersQuery $getUsersQuery,
         GetAllRolesQuery $getAllRolesQuery,
+        CheckUserIsAdminQuery $checkUserIsAdminQuery,
     ): Response {
+        $user = $request->user();
+        abort_if(! $user || ! $checkUserIsAdminQuery->handle($user), 403);
+
         $filters = UserFilters::fromRequest($request);
         $users = $getUsersQuery->handle($filters)->withQueryString();
 
@@ -46,8 +51,14 @@ final readonly class UsersController
         ]);
     }
 
-    public function create(GetAllRolesQuery $getAllRolesQuery): Response
-    {
+    public function create(
+        Request $request,
+        GetAllRolesQuery $getAllRolesQuery,
+        CheckUserIsAdminQuery $checkUserIsAdminQuery,
+    ): Response {
+        $user = $request->user();
+        abort_if(! $user || ! $checkUserIsAdminQuery->handle($user), 403);
+
         return Inertia::render('admin/users/create', [
             'roles' => $getAllRolesQuery->handle(),
         ]);
@@ -87,17 +98,28 @@ final readonly class UsersController
         }
     }
 
-    public function show(User $user): Response
-    {
+    public function show(
+        Request $request,
+        User $user,
+        CheckUserIsAdminQuery $checkUserIsAdminQuery,
+    ): Response {
+        $authUser = $request->user();
+        abort_if(! $authUser || ! $checkUserIsAdminQuery->handle($authUser), 403);
+
         return Inertia::render('admin/users/show', [
             'user' => $user->load('roles'),
         ]);
     }
 
     public function edit(
+        Request $request,
         User $user,
         GetAllRolesQuery $getAllRolesQuery,
+        CheckUserIsAdminQuery $checkUserIsAdminQuery,
     ): Response {
+        $authUser = $request->user();
+        abort_if(! $authUser || ! $checkUserIsAdminQuery->handle($authUser), 403);
+
         return Inertia::render('admin/users/edit', [
             'user' => $user->load('roles'),
             'roles' => $getAllRolesQuery->handle(),
