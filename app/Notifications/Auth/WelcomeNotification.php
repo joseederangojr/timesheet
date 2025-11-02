@@ -33,10 +33,14 @@ final class WelcomeNotification extends Notification implements ShouldQueue
             ->greeting('Welcome to Timesheet!')
             ->line('Your account has been created successfully.')
             ->line('Here are your login credentials:')
-            ->line('**Email:** ' . $notifiable->email)
-            ->line('**Password:** ' . $this->password)
+            ->line('**Email:** '.$notifiable->email)
+            ->line('**Password:** '.$this->password)
             ->action('Sign In', route('login'))
-            ->line('Please change your password after your first login for security.')
-            ->line('If you have any questions, please contact your administrator.');
+            ->line(
+                'Please change your password after your first login for security.',
+            )
+            ->line(
+                'If you have any questions, please contact your administrator.',
+            );
     }
 }

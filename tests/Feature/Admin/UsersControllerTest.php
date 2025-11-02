@@ -824,11 +824,7 @@ describe('Admin Users Controller', function (): void {
 
             expect($response)
                 ->assertRedirect()
-                ->assertSessionHasErrors([
-                    'name',
-                    'email',
-                    'roles',
-                ]);
+                ->assertSessionHasErrors(['name', 'email', 'roles']);
         });
 
         it('validates email format', function (): void {
@@ -866,8 +862,6 @@ describe('Admin Users Controller', function (): void {
                 ->assertRedirect()
                 ->assertSessionHasErrors('email');
         });
-
-
 
         it('validates roles are required', function (): void {
             $userData = [

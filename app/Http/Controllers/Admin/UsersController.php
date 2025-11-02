@@ -15,7 +15,6 @@ use App\Queries\GetAllRolesQuery;
 use App\Queries\GetRolesByNamesQuery;
 use App\Queries\GetUsersQuery;
 use Exception;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
