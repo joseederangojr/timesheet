@@ -267,7 +267,8 @@ it('displays edit user page', function (): void {
 
     $page = visit('/admin/users/'.$user->id.'/edit');
 
-    $page->assertSee('Edit User')
+    $page
+        ->assertSee('Edit User')
         ->assertSee('Update user information and role assignments.');
 });
 
@@ -287,14 +288,16 @@ it('can update user information', function (): void {
     $page = visit('/admin/users/'.$user->id.'/edit');
 
     // Fill out the form and select a role
-    $page->fill('name', 'Updated Name')
+    $page
+        ->fill('name', 'Updated Name')
         ->fill('email', 'updated@example.com')
         ->click('Select roles...') // Open the role dropdown
         ->click('employee') // Select employee role
         ->click('Update User');
 
     // Should redirect back to users index with success message
-    $page->assertPathIs('/admin/users')
+    $page
+        ->assertPathIs('/admin/users')
         ->assertSee('User updated successfully.');
 
     // Verify the user was updated in the database
