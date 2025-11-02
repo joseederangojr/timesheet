@@ -94,8 +94,10 @@ final readonly class UsersController
         ]);
     }
 
-    public function edit(User $user, GetAllRolesQuery $getAllRolesQuery): Response
-    {
+    public function edit(
+        User $user,
+        GetAllRolesQuery $getAllRolesQuery,
+    ): Response {
         return Inertia::render('admin/users/edit', [
             'user' => $user->load('roles'),
             'roles' => $getAllRolesQuery->handle(),
