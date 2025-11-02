@@ -15,7 +15,7 @@ final readonly class CreateUserData
     public function __construct(
         public string $name,
         public string $email,
-        public string $password,
+        public ?string $password,
         public Collection $roles,
     ) {
         //

@@ -78,17 +78,6 @@ export function UserForm({ roles, onSuccess }: UserFormProps) {
             </div>
 
             <div>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="Enter password"
-                    required
-                />
-            </div>
-
-            <div>
                 <Label>Roles</Label>
                 <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>

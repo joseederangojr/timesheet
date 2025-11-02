@@ -1,3 +1,4 @@
+'no use memo';
 import { Column } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from 'lucide-react';
 
@@ -22,7 +23,6 @@ export function DataTableColumnHeader<TData, TValue>({
     title,
     className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
-    'no use memo';
     if (!column.getCanSort()) {
         return <div className={cn(className)}>{title}</div>;
     }

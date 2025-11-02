@@ -222,14 +222,17 @@ describe('GetUsersQuery', function (): void {
             expect($result->first()->id)->toBe($verifiedUser->id);
         });
 
-        it('handles invalid sort field by falling back to first allowed field', function (): void {
-            User::factory(3)->create();
+        it(
+            'handles invalid sort field by falling back to first allowed field',
+            function (): void {
+                User::factory(3)->create();
 
-            $filters = new UserFilters(sortBy: 'invalid_field');
-            $result = $this->query->handle($filters);
+                $filters = new UserFilters(sortBy: 'invalid_field');
+                $result = $this->query->handle($filters);
 
-            expect($result->count())->toBe(3);
-            // Should sort by 'name' (first allowed)
-        });
+                expect($result->count())->toBe(3);
+                // Should sort by 'name' (first allowed)
+            },
+        );
     });
 });

@@ -4,6 +4,7 @@ import { useSidebar } from '@/hooks/use-sidebar';
 import { cn } from '@/lib/utils';
 import { Form, Link } from '@inertiajs/react';
 import {
+    Building2,
     ChevronLeft,
     ChevronRight,
     Home,
@@ -35,6 +36,11 @@ const navigationItems: NavigationItem[] = [
         label: 'Users',
         href: '/admin/users',
         icon: Users,
+    },
+    {
+        label: 'Clients',
+        href: '/admin/clients',
+        icon: Building2,
     },
 ];
 

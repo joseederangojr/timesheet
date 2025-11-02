@@ -1,3 +1,4 @@
+'use no memo';
 import { Table } from '@tanstack/react-table';
 import {
     ChevronLeft,
@@ -22,7 +23,6 @@ interface DataTablePaginationProps<TData> {
 export function DataTablePagination<TData>({
     table,
 }: DataTablePaginationProps<TData>) {
-    'no use memo';
     return (
         <div className="flex items-center justify-between px-2">
             {table.getIsSomeRowsSelected() ? (

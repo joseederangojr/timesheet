@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
 describe('Admin Users Controller', function (): void {
     beforeEach(function (): void {
+        Notification::fake();
+
         $this->adminRole = Role::factory()->create(['name' => 'admin']);
         $this->employeeRole = Role::factory()->create(['name' => 'employee']);
 
@@ -773,6 +776,7 @@ describe('Admin Users Controller', function (): void {
                 ->where('email', 'newuser@example.com')
                 ->first();
             expect($newUser)->not->toBeNull();
+            expect($newUser->password)->not->toBeNull();
             expect($newUser->roles->pluck('name'))->toContain('user');
         });
 
@@ -781,7 +785,6 @@ describe('Admin Users Controller', function (): void {
                 '_token' => 'test-token',
                 'name' => 'New User',
                 'email' => 'newuser@example.com',
-                'password' => 'password123',
                 'roles' => ['user'],
             ];
 
@@ -824,7 +827,6 @@ describe('Admin Users Controller', function (): void {
                 ->assertSessionHasErrors([
                     'name',
                     'email',
-                    'password',
                     'roles',
                 ]);
         });
@@ -834,7 +836,6 @@ describe('Admin Users Controller', function (): void {
                 '_token' => 'test-token',
                 'name' => 'New User',
                 'email' => 'invalid-email',
-                'password' => 'password123',
                 'roles' => ['user'],
             ];
 
@@ -854,7 +855,6 @@ describe('Admin Users Controller', function (): void {
                 '_token' => 'test-token',
                 'name' => 'New User',
                 'email' => 'existing@example.com',
-                'password' => 'password123',
                 'roles' => ['user'],
             ];
 
@@ -867,30 +867,13 @@ describe('Admin Users Controller', function (): void {
                 ->assertSessionHasErrors('email');
         });
 
-        it('validates password minimum length', function (): void {
-            $userData = [
-                '_token' => 'test-token',
-                'name' => 'New User',
-                'email' => 'newuser@example.com',
-                'password' => '123',
-                'roles' => ['user'],
-            ];
 
-            $response = $this->actingAs($this->admin)
-                ->withSession(['_token' => 'test-token'])
-                ->post('/admin/users', $userData);
-
-            expect($response)
-                ->assertRedirect()
-                ->assertSessionHasErrors('password');
-        });
 
         it('validates roles are required', function (): void {
             $userData = [
                 '_token' => 'test-token',
                 'name' => 'New User',
                 'email' => 'newuser@example.com',
-                'password' => 'password123',
                 'roles' => [],
             ];
 
@@ -908,7 +891,6 @@ describe('Admin Users Controller', function (): void {
                 '_token' => 'test-token',
                 'name' => 'New User',
                 'email' => 'newuser@example.com',
-                'password' => 'password123',
                 'roles' => ['nonexistent'],
             ];
 
@@ -929,7 +911,6 @@ describe('Admin Users Controller', function (): void {
                 '_token' => 'test-token',
                 'name' => 'Multi Role User',
                 'email' => 'multi@example.com',
-                'password' => 'password123',
                 'roles' => ['user', 'manager'],
             ];
 
@@ -959,7 +940,6 @@ describe('Admin Users Controller', function (): void {
                 '_token' => 'test-token',
                 'name' => 'Exception User',
                 'email' => 'exception@example.com',
-                'password' => 'password123',
                 'roles' => ['user'],
             ];
 

@@ -82,4 +82,34 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function ():
         App\Http\Controllers\Admin\UsersController::class,
         'update',
     ])->name('users.update');
+
+    Route::get('/clients', [
+        App\Http\Controllers\Admin\ClientsController::class,
+        'index',
+    ])->name('clients.index');
+
+    Route::get('/clients/create', [
+        App\Http\Controllers\Admin\ClientsController::class,
+        'create',
+    ])->name('clients.create');
+
+    Route::post('/clients', [
+        App\Http\Controllers\Admin\ClientsController::class,
+        'store',
+    ])->name('clients.store');
+
+    Route::get('/clients/{client}', [
+        App\Http\Controllers\Admin\ClientsController::class,
+        'show',
+    ])->name('clients.show');
+
+    Route::get('/clients/{client}/edit', [
+        App\Http\Controllers\Admin\ClientsController::class,
+        'edit',
+    ])->name('clients.edit');
+
+    Route::put('/clients/{client}', [
+        App\Http\Controllers\Admin\ClientsController::class,
+        'update',
+    ])->name('clients.update');
 });

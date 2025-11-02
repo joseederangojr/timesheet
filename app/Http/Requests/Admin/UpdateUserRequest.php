@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin;
 
-use App\Queries\CheckUserIsAdminQuery;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $user = $this->user();
-
-        return $user && app(CheckUserIsAdminQuery::class)->handle($user);
+        return $this->user()?->can('update', $this->route('user')) ?? false;
     }
 
     /**

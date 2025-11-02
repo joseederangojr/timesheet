@@ -8,15 +8,14 @@ use App\Actions\CreateUser;
 use App\Actions\UpdateUser;
 use App\Data\CreateUserData;
 use App\Data\UpdateUserData;
-use App\Data\UserFilters;
 use App\Http\Requests\Admin\CreateUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\User;
-use App\Queries\CheckUserIsAdminQuery;
 use App\Queries\GetAllRolesQuery;
 use App\Queries\GetRolesByNamesQuery;
 use App\Queries\GetUsersQuery;
 use Exception;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -28,10 +27,8 @@ final readonly class UsersController
         Request $request,
         GetUsersQuery $getUsersQuery,
         GetAllRolesQuery $getAllRolesQuery,
-        CheckUserIsAdminQuery $checkUserIsAdminQuery,
     ): Response {
-        $user = $request->user();
-        abort_if(! $user || ! $checkUserIsAdminQuery->handle($user), 403);
+        $this->authorize('viewAny', User::class);
 
         $filters = UserFilters::fromRequest($request);
         $users = $getUsersQuery->handle($filters)->withQueryString();
@@ -54,10 +51,8 @@ final readonly class UsersController
     public function create(
         Request $request,
         GetAllRolesQuery $getAllRolesQuery,
-        CheckUserIsAdminQuery $checkUserIsAdminQuery,
     ): Response {
-        $user = $request->user();
-        abort_if(! $user || ! $checkUserIsAdminQuery->handle($user), 403);
+        $this->authorize('create', User::class);
 
         return Inertia::render('admin/users/create', [
             'roles' => $getAllRolesQuery->handle(),
@@ -70,7 +65,7 @@ final readonly class UsersController
         CreateUser $createUser,
     ): RedirectResponse {
         try {
-            /** @var array{name: string, email: string, password: string, roles: string[]} $validated */
+            /** @var array{name: string, email: string, password: ?string, roles: string[]} $validated */
             $validated = $request->validated();
 
             $roles = $getRolesByNamesQuery->handle($validated['roles']);
@@ -98,13 +93,9 @@ final readonly class UsersController
         }
     }
 
-    public function show(
-        Request $request,
-        User $user,
-        CheckUserIsAdminQuery $checkUserIsAdminQuery,
-    ): Response {
-        $authUser = $request->user();
-        abort_if(! $authUser || ! $checkUserIsAdminQuery->handle($authUser), 403);
+    public function show(Request $request, User $user): Response
+    {
+        $this->authorize('view', $user);
 
         return Inertia::render('admin/users/show', [
             'user' => $user->load('roles'),
@@ -115,10 +106,8 @@ final readonly class UsersController
         Request $request,
         User $user,
         GetAllRolesQuery $getAllRolesQuery,
-        CheckUserIsAdminQuery $checkUserIsAdminQuery,
     ): Response {
-        $authUser = $request->user();
-        abort_if(! $authUser || ! $checkUserIsAdminQuery->handle($authUser), 403);
+        $this->authorize('update', $user);
 
         return Inertia::render('admin/users/edit', [
             'user' => $user->load('roles'),

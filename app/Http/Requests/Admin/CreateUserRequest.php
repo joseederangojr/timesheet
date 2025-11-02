@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin;
 
-use App\Queries\CheckUserIsAdminQuery;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class CreateUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $user = $this->user();
-
-        return $user && app(CheckUserIsAdminQuery::class)->handle($user);
+        return $this->user()?->can('create', \App\Models\User::class) ?? false;
     }
 
     /**
@@ -24,7 +21,7 @@ final class CreateUserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['nullable', 'string', 'min:8'],
             'roles' => ['required', 'array', 'min:1'],
             'roles.*' => ['string', 'exists:roles,name'],
         ];
@@ -40,7 +37,6 @@ final class CreateUserRequest extends FormRequest
             'email.required' => 'Email address is required.',
             'email.email' => 'Please enter a valid email address.',
             'email.unique' => 'This email address is already in use.',
-            'password.required' => 'Password is required.',
             'password.min' => 'Password must be at least 8 characters.',
             'roles.required' => 'At least one role is required.',
             'roles.array' => 'Roles must be an array.',

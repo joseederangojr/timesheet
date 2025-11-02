@@ -19,22 +19,22 @@ final readonly class UserFilters
 
     public static function fromRequest(Request $request): self
     {
-        $search = $request->string('search');
-        $search = $search->isEmpty() ? null : (string) $search;
+        $search = $request->input('search');
+        $search = empty($search) ? null : (string) $search;
 
-        $role = $request->string('role');
-        $role = $role->isEmpty() ? null : (string) $role;
+        $role = $request->input('role');
+        $role = empty($role) ? null : (string) $role;
 
-        $verified = $request->string('verified');
-        $verified = $verified->isEmpty() ? null : (string) $verified;
+        $verified = $request->input('verified');
+        $verified = empty($verified) ? null : (string) $verified;
 
-        $perPage = $request->string('per_page');
-        $perPage = $perPage->isEmpty() ? null : (string) $perPage;
+        $perPage = $request->input('per_page');
+        $perPage = empty($perPage) ? null : (string) $perPage;
 
         return new self(
             search: $search,
-            sortBy: (string) $request->string('sort_by', 'created_at'),
-            sortDirection: (string) $request->string('sort_direction', 'desc'),
+            sortBy: (string) $request->input('sort_by', 'created_at'),
+            sortDirection: (string) $request->input('sort_direction', 'desc'),
             role: $role,
             verified: $verified,
             perPage: $perPage,
