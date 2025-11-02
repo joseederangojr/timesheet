@@ -6,6 +6,9 @@ namespace App\Queries\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ */
 final readonly class SortFilter
 {
     /**
@@ -14,9 +17,12 @@ final readonly class SortFilter
     public function __construct(
         private array $allowedSortFields,
         private string $sortBy = 'created_at',
-        private string $sortDirection = 'desc'
+        private string $sortDirection = 'desc',
     ) {}
 
+    /**
+     * @param Builder<covariant TModel> $query
+     */
     public function __invoke(Builder $query): void
     {
         $sortBy = in_array($this->sortBy, $this->allowedSortFields, true)

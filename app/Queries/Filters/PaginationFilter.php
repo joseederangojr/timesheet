@@ -7,13 +7,21 @@ namespace App\Queries\Filters;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ */
 final readonly class PaginationFilter
 {
     public function __construct(private ?string $perPage = '15') {}
 
+    /**
+     * @param  Builder<TModel>  $query
+     * @return LengthAwarePaginator<int,TModel>
+     */
     public function __invoke(Builder $query): LengthAwarePaginator
     {
-        return $query->paginate(perPage: (int) ($this->perPage ?: 15))
+        return $query
+            ->paginate(perPage: (int) ($this->perPage ?: 15))
             ->withQueryString();
     }
 }

@@ -15,17 +15,35 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 final readonly class GetUsersQuery
 {
+    private const array SEARCHABLE = ['name', 'email'];
+
+    private const array SORTABLE = [
+        'name',
+        'email',
+        'created_at',
+        'email_verified_at',
+    ];
+
     /**
      * @return LengthAwarePaginator<int, User>
      */
     public function handle(UserFilters $filters): LengthAwarePaginator
     {
+        /** @var PaginationFilter<User> $pagination */
+        $pagination = new PaginationFilter($filters->perPage);
+
         return User::query()
             ->with('roles')
-            ->tap(new SearchFilter(['name', 'email'], $filters->search))
+            ->tap(new SearchFilter(self::SEARCHABLE, $filters->search))
             ->tap(new RoleFilter($filters->role))
             ->tap(new VerificationFilter($filters->verified))
-            ->tap(new SortFilter(['name', 'email', 'created_at', 'email_verified_at'], $filters->sortBy, $filters->sortDirection))
-            ->pipe(new PaginationFilter($filters->perPage));
+            ->tap(
+                new SortFilter(
+                    self::SORTABLE,
+                    $filters->sortBy,
+                    $filters->sortDirection,
+                ),
+            )
+            ->pipe($pagination);
     }
 }
