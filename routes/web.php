@@ -67,4 +67,19 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function ():
         App\Http\Controllers\Admin\UsersController::class,
         'store',
     ])->name('users.store');
+
+    Route::get('/users/{user}', [
+        App\Http\Controllers\Admin\UsersController::class,
+        'show',
+    ])->name('users.show');
+
+    Route::get('/users/{user}/edit', [
+        App\Http\Controllers\Admin\UsersController::class,
+        'edit',
+    ])->name('users.edit');
+
+    Route::put('/users/{user}', [
+        App\Http\Controllers\Admin\UsersController::class,
+        'update',
+    ])->name('users.update');
 });
