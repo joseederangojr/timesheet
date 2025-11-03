@@ -9,47 +9,36 @@ use App\Actions\UpdateClient;
 use App\Data\ClientFilters;
 use App\Data\CreateClientData;
 use App\Data\UpdateClientData;
+use App\Http\Requests\Admin\ClientCreateRequest;
+use App\Http\Requests\Admin\ClientEditRequest;
+use App\Http\Requests\Admin\ClientIndexRequest;
+use App\Http\Requests\Admin\ClientShowRequest;
 use App\Http\Requests\Admin\CreateClientRequest;
 use App\Http\Requests\Admin\UpdateClientRequest;
 use App\Models\Client;
 use App\Queries\GetClientsQuery;
 use Exception;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 final readonly class ClientsController
 {
-    use AuthorizesRequests;
-
     public function index(
-        Request $request,
+        ClientIndexRequest $request,
         GetClientsQuery $getClientsQuery,
     ): Response {
-        $this->authorize('viewAny', Client::class);
-
         $filters = ClientFilters::fromRequest($request);
         $clients = $getClientsQuery->handle($filters)->withQueryString();
 
         return Inertia::render('admin/clients/index', [
             'clients' => fn () => $clients,
-            'filters' => $request->only([
-                'search',
-                'sort_by',
-                'sort_direction',
-                'status',
-                'page',
-                'per_page',
-            ]),
+            'filters' => $request->validated(),
         ]);
     }
 
-    public function create(): Response
+    public function create(ClientCreateRequest $request): Response
     {
-        $this->authorize('create', Client::class);
-
         return Inertia::render('admin/clients/create');
     }
 
@@ -90,19 +79,15 @@ final readonly class ClientsController
         }
     }
 
-    public function show(Request $request, Client $client): Response
+    public function show(ClientShowRequest $request, Client $client): Response
     {
-        $this->authorize('view', $client);
-
         return Inertia::render('admin/clients/show', [
             'client' => $client,
         ]);
     }
 
-    public function edit(Request $request, Client $client): Response
+    public function edit(ClientEditRequest $request, Client $client): Response
     {
-        $this->authorize('update', $client);
-
         return Inertia::render('admin/clients/edit', [
             'client' => $client,
         ]);
@@ -136,12 +121,7 @@ final readonly class ClientsController
                 'type' => 'success',
                 'message' => __('Client updated successfully.'),
             ]);
-        } catch (Exception $exception) {
-            \Illuminate\Support\Facades\Log::error('Exception in update', [
-                'message' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
-            ]);
-
+        } catch (Exception) {
             return back()
                 ->withInput()
                 ->with('status', [

@@ -9,6 +9,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useFormDefaults } from '@/hooks/use-form-defaults';
 import { Form } from '@inertiajs/react';
 
 interface ClientFormProps {
@@ -16,6 +17,17 @@ interface ClientFormProps {
 }
 
 export function ClientForm({ onSuccess }: ClientFormProps) {
+    const formDefaults = useFormDefaults({
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        status: '',
+        industry: '',
+        contact_person: '',
+        website: '',
+    });
+
     return (
         <Form
             method="post"
@@ -32,6 +44,7 @@ export function ClientForm({ onSuccess }: ClientFormProps) {
                         id="name"
                         name="name"
                         placeholder="Enter company name"
+                        defaultValue={formDefaults.name}
                         required
                     />
                 </div>
@@ -43,6 +56,7 @@ export function ClientForm({ onSuccess }: ClientFormProps) {
                         name="email"
                         type="email"
                         placeholder="Enter email address"
+                        defaultValue={formDefaults.email}
                         required
                     />
                 </div>
@@ -56,12 +70,17 @@ export function ClientForm({ onSuccess }: ClientFormProps) {
                         name="phone"
                         type="tel"
                         placeholder="Enter phone number"
+                        defaultValue={formDefaults.phone}
                     />
                 </div>
 
                 <div className="space-y-2">
                     <Label htmlFor="status">Status *</Label>
-                    <Select name="status" required>
+                    <Select
+                        name="status"
+                        defaultValue={formDefaults.status}
+                        required
+                    >
                         <SelectTrigger>
                             <SelectValue placeholder="Select status" />
                         </SelectTrigger>
@@ -81,6 +100,7 @@ export function ClientForm({ onSuccess }: ClientFormProps) {
                     name="address"
                     placeholder="Enter full address"
                     rows={3}
+                    defaultValue={formDefaults.address}
                 />
             </div>
 
@@ -91,6 +111,7 @@ export function ClientForm({ onSuccess }: ClientFormProps) {
                         id="industry"
                         name="industry"
                         placeholder="e.g., Technology, Healthcare"
+                        defaultValue={formDefaults.industry}
                     />
                 </div>
 
@@ -100,6 +121,7 @@ export function ClientForm({ onSuccess }: ClientFormProps) {
                         id="contact_person"
                         name="contact_person"
                         placeholder="Enter contact person name"
+                        defaultValue={formDefaults.contact_person}
                     />
                 </div>
             </div>
@@ -111,6 +133,7 @@ export function ClientForm({ onSuccess }: ClientFormProps) {
                     name="website"
                     type="url"
                     placeholder="https://example.com"
+                    defaultValue={formDefaults.website}
                 />
             </div>
 
@@ -141,6 +164,17 @@ interface ClientEditFormProps {
 }
 
 export function ClientEditForm({ client, onSuccess }: ClientEditFormProps) {
+    const formDefaults = useFormDefaults({
+        name: client.name,
+        email: client.email,
+        phone: client.phone || '',
+        address: client.address || '',
+        status: client.status,
+        industry: client.industry || '',
+        contact_person: client.contact_person || '',
+        website: client.website || '',
+    });
+
     return (
         <Form
             method="put"
@@ -157,7 +191,7 @@ export function ClientEditForm({ client, onSuccess }: ClientEditFormProps) {
                         id="name"
                         name="name"
                         placeholder="Enter company name"
-                        defaultValue={client.name}
+                        defaultValue={formDefaults.name}
                         required
                     />
                 </div>
@@ -169,7 +203,7 @@ export function ClientEditForm({ client, onSuccess }: ClientEditFormProps) {
                         name="email"
                         type="email"
                         placeholder="Enter email address"
-                        defaultValue={client.email}
+                        defaultValue={formDefaults.email}
                         required
                     />
                 </div>
@@ -183,13 +217,17 @@ export function ClientEditForm({ client, onSuccess }: ClientEditFormProps) {
                         name="phone"
                         type="tel"
                         placeholder="Enter phone number"
-                        defaultValue={client.phone || ''}
+                        defaultValue={formDefaults.phone}
                     />
                 </div>
 
                 <div className="space-y-2">
                     <Label htmlFor="status">Status *</Label>
-                    <Select name="status" defaultValue={client.status} required>
+                    <Select
+                        name="status"
+                        defaultValue={formDefaults.status}
+                        required
+                    >
                         <SelectTrigger>
                             <SelectValue placeholder="Select status" />
                         </SelectTrigger>
@@ -209,7 +247,7 @@ export function ClientEditForm({ client, onSuccess }: ClientEditFormProps) {
                     name="address"
                     placeholder="Enter full address"
                     rows={3}
-                    defaultValue={client.address || ''}
+                    defaultValue={formDefaults.address}
                 />
             </div>
 
@@ -220,7 +258,7 @@ export function ClientEditForm({ client, onSuccess }: ClientEditFormProps) {
                         id="industry"
                         name="industry"
                         placeholder="e.g., Technology, Healthcare"
-                        defaultValue={client.industry || ''}
+                        defaultValue={formDefaults.industry}
                     />
                 </div>
 
@@ -230,7 +268,7 @@ export function ClientEditForm({ client, onSuccess }: ClientEditFormProps) {
                         id="contact_person"
                         name="contact_person"
                         placeholder="Enter contact person name"
-                        defaultValue={client.contact_person || ''}
+                        defaultValue={formDefaults.contact_person}
                     />
                 </div>
             </div>
@@ -242,7 +280,7 @@ export function ClientEditForm({ client, onSuccess }: ClientEditFormProps) {
                     name="website"
                     type="url"
                     placeholder="https://example.com"
-                    defaultValue={client.website || ''}
+                    defaultValue={formDefaults.website}
                 />
             </div>
 

@@ -15,6 +15,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
+import { useFormDefaults } from '@/hooks/use-form-defaults';
 import { cn } from '@/lib/utils';
 import { Form } from '@inertiajs/react';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
@@ -31,7 +32,15 @@ interface UserFormProps {
 }
 
 export function UserForm({ roles, onSuccess }: UserFormProps) {
-    const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+    const formDefaults = useFormDefaults({
+        name: '',
+        email: '',
+        roles: [] as string[],
+    });
+
+    const [selectedRoles, setSelectedRoles] = useState<string[]>(
+        formDefaults.roles,
+    );
     const [open, setOpen] = useState(false);
 
     const toggleRole = (roleName: string) => {
@@ -62,6 +71,7 @@ export function UserForm({ roles, onSuccess }: UserFormProps) {
                     id="name"
                     name="name"
                     placeholder="Enter user name"
+                    defaultValue={formDefaults.name}
                     required
                 />
             </div>
@@ -73,6 +83,7 @@ export function UserForm({ roles, onSuccess }: UserFormProps) {
                     name="email"
                     type="email"
                     placeholder="Enter email address"
+                    defaultValue={formDefaults.email}
                     required
                 />
             </div>
@@ -181,8 +192,14 @@ interface UserEditFormProps {
 }
 
 export function UserEditForm({ user, roles, onSuccess }: UserEditFormProps) {
+    const formDefaults = useFormDefaults({
+        name: user.name,
+        email: user.email,
+        roles: user.roles.map((role) => role.name),
+    });
+
     const [selectedRoles, setSelectedRoles] = useState<string[]>(
-        user.roles.map((role) => role.name),
+        formDefaults.roles,
     );
     const [open, setOpen] = useState(false);
 
@@ -215,7 +232,7 @@ export function UserEditForm({ user, roles, onSuccess }: UserEditFormProps) {
                             id="name"
                             name="name"
                             placeholder="Enter user name"
-                            defaultValue={user.name}
+                            defaultValue={formDefaults.name}
                             required
                         />
                         {errors.name && (
@@ -232,7 +249,7 @@ export function UserEditForm({ user, roles, onSuccess }: UserEditFormProps) {
                             name="email"
                             type="email"
                             placeholder="Enter email address"
-                            defaultValue={user.email}
+                            defaultValue={formDefaults.email}
                             required
                         />
                         {errors.email && (

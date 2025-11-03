@@ -11,13 +11,15 @@ use App\Data\UpdateUserData;
 use App\Data\UserFilters;
 use App\Http\Requests\Admin\CreateUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
+use App\Http\Requests\Admin\UserCreateRequest;
+use App\Http\Requests\Admin\UserEditRequest;
+use App\Http\Requests\Admin\UserIndexRequest;
+use App\Http\Requests\Admin\UserShowRequest;
 use App\Models\User;
 use App\Queries\GetAllRolesQuery;
 use App\Queries\GetRolesByNamesQuery;
 use App\Queries\GetUsersQuery;
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -25,12 +27,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 final readonly class UsersController
 {
     public function index(
-        Request $request,
+        UserIndexRequest $request,
         GetUsersQuery $getUsersQuery,
         GetAllRolesQuery $getAllRolesQuery,
     ): Response {
-        Gate::authorize('viewAny', User::class);
-
         $filters = UserFilters::fromRequest($request);
         $users = $getUsersQuery->handle($filters)->withQueryString();
 
@@ -50,11 +50,9 @@ final readonly class UsersController
     }
 
     public function create(
-        Request $request,
+        UserCreateRequest $request,
         GetAllRolesQuery $getAllRolesQuery,
     ): Response {
-        Gate::authorize('create', User::class);
-
         return Inertia::render('admin/users/create', [
             'roles' => $getAllRolesQuery->handle(),
         ]);
@@ -94,22 +92,18 @@ final readonly class UsersController
         }
     }
 
-    public function show(Request $request, User $user): Response
+    public function show(UserShowRequest $request, User $user): Response
     {
-        Gate::authorize('view', $user);
-
         return Inertia::render('admin/users/show', [
             'user' => $user->load('roles'),
         ]);
     }
 
     public function edit(
-        Request $request,
+        UserEditRequest $request,
         User $user,
         GetAllRolesQuery $getAllRolesQuery,
     ): Response {
-        Gate::authorize('update', $user);
-
         return Inertia::render('admin/users/edit', [
             'user' => $user->load('roles'),
             'roles' => $getAllRolesQuery->handle(),
