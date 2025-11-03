@@ -81,6 +81,7 @@ export function ClientForm({ onSuccess }: ClientFormProps) {
                         defaultValue={formDefaults.status}
                         required
                     >
+                    <Select name="status" required>
                         <SelectTrigger>
                             <SelectValue placeholder="Select status" />
                         </SelectTrigger>
