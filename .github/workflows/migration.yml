@@ -1,0 +1,47 @@
+name: migration
+
+on:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          tools: composer:v2
+          extensions: pdo_pgsql
+          coverage: xdebug
+
+      - name: Get Composer Cache Directory
+        id: composer-cache-dir
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Migrate database
+        env:
+          DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
+          DB_DATABASE: ${{ secrets.DB_URL }}
+        run: |
+          composer install --no-interaction --prefer-dist --optimize-autoloader --quiet
+          touch .env
+          echo "APP_KEY=" >> .env
+          echo "DB_CONNECTION=$DB_CONNECTION">>.env
+          echo "DB_URL=$DB_URL">>.env
+          php artisan key:generate
+          php artisan migrate --force
