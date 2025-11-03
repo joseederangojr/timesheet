@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  tests:
+  migration:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: production
@@ -34,14 +34,11 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Migrate database
-        env:
-          DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
-          DB_DATABASE: ${{ secrets.DB_URL }}
         run: |
           composer install --no-interaction --prefer-dist --optimize-autoloader --quiet
           touch .env
           echo "APP_KEY=" >> .env
-          echo "DB_CONNECTION=$DB_CONNECTION">>.env
-          echo "DB_URL=$DB_URL">>.env
+          echo "DB_CONNECTION=${{ secrets.DB_CONNECTION }}" >>.env
+          echo "DB_URL=${{ secrets.DB_URL }}" >>.env
           php artisan key:generate
           php artisan migrate --force
