@@ -16,8 +16,8 @@ final readonly class SortFilter
      */
     public function __construct(
         private array $allowedSortFields,
-        private string $sortBy = 'created_at',
-        private string $sortDirection = 'desc',
+        private ?string $sortBy = 'created_at',
+        private ?string $sortDirection = 'desc',
     ) {}
 
     /**

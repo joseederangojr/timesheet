@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Models\User;
-use App\Queries\CheckUserIsAdminQuery;
+use App\Queries\CheckUserIsAdminQueryInterface;
 
 final readonly class ClientPolicy
 {
     public function __construct(
-        private CheckUserIsAdminQuery $checkUserIsAdminQuery,
+        private CheckUserIsAdminQueryInterface $checkUserIsAdminQuery,
     ) {}
 
     /**

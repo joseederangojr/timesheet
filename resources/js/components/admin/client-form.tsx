@@ -78,10 +78,9 @@ export function ClientForm({ onSuccess }: ClientFormProps) {
                     <Label htmlFor="status">Status *</Label>
                     <Select
                         name="status"
-                        defaultValue={formDefaults.status}
                         required
+                        defaultValue={formDefaults.status}
                     >
-                    <Select name="status" required>
                         <SelectTrigger>
                             <SelectValue placeholder="Select status" />
                         </SelectTrigger>

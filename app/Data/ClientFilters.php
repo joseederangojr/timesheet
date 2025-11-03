@@ -20,9 +20,9 @@ final readonly class ClientFilters
     {
         return new self(
             search: (string) $request->string('search', ''),
-            status: (string) $request->string('status', ''),
             sortBy: (string) $request->string('sort_by', 'created_at'),
             sortDirection: (string) $request->string('sort_direction', 'desc'),
+            status: (string) $request->string('status', ''),
             perPage: (string) $request->string('per_page', '15'),
         );
     }

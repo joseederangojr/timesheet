@@ -35,12 +35,12 @@ it('creates filters from request with empty parameters', function (): void {
 
     $filters = UserFilters::fromRequest($request);
 
-    expect($filters->search)->toBeNull();
+    expect($filters->search)->toBe('');
     expect($filters->sortBy)->toBe('created_at');
     expect($filters->sortDirection)->toBe('desc');
-    expect($filters->role)->toBeNull();
-    expect($filters->verified)->toBeNull();
-    expect($filters->perPage)->toBeNull();
+    expect($filters->role)->toBe('');
+    expect($filters->verified)->toBe('');
+    expect($filters->perPage)->toBe('');
 });
 
 it('creates filters from request with missing parameters', function (): void {
@@ -48,10 +48,10 @@ it('creates filters from request with missing parameters', function (): void {
 
     $filters = UserFilters::fromRequest($request);
 
-    expect($filters->search)->toBeNull();
+    expect($filters->search)->toBe('');
     expect($filters->sortBy)->toBe('created_at');
     expect($filters->sortDirection)->toBe('desc');
-    expect($filters->role)->toBeNull();
-    expect($filters->verified)->toBeNull();
-    expect($filters->perPage)->toBeNull();
+    expect($filters->role)->toBe('');
+    expect($filters->verified)->toBe('');
+    expect($filters->perPage)->toBe('15');
 });

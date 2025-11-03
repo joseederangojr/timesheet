@@ -20,12 +20,12 @@ final readonly class UserFilters
     public static function fromRequest(Request $request): self
     {
         return new self(
-            search: (string) $request->input('search', ''),
-            role: (string) $request->input('role', ''),
-            verified: (string) $request->input('verified', ''),
-            sortBy: (string) $request->input('sort_by', 'created_at'),
-            sortDirection: (string) $request->input('sort_direction', 'desc'),
-            perPage: (string) $request->input('per_page', '15'),
+            search: (string) $request->string('search', ''),
+            sortBy: (string) $request->string('sort_by', 'created_at'),
+            sortDirection: (string) $request->string('sort_direction', 'desc'),
+            role: (string) $request->string('role', ''),
+            verified: (string) $request->string('verified', ''),
+            perPage: (string) $request->string('per_page', '15'),
         );
     }
 }
