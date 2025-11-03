@@ -6,7 +6,7 @@ namespace App\Queries;
 
 use App\Models\User;
 
-final readonly class CheckUserIsAdminQuery implements CheckUserIsAdminQueryInterface
+final readonly class CheckUserIsAdminQuery
 {
     public function __construct(
         private CheckUserHasRoleQuery $checkUserHasRoleQuery,

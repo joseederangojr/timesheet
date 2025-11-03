@@ -28,7 +28,9 @@ it('returns empty collection when no clients exist', function (): void {
     $result = $query->handle();
 
     expect($result)->toBeEmpty();
-    expect($result)->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class);
+    expect($result)->toBeInstanceOf(
+        Illuminate\Database\Eloquent\Collection::class,
+    );
 });
 
 it('returns clients with correct model instances', function (): void {
