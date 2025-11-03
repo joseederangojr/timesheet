@@ -95,7 +95,7 @@
         ],
         "test:coverage": [
             "pest --parallel --type-coverage --min=100",
-            "pest --parallel --coverage --exactly=100.0"
+            "pest --parallel --coverage --min=100"
         ],
         "test:types": [
             "rector --dry-run",
@@ -104,10 +104,10 @@
             "npm run test:types"
         ],
         "test": [
-            "@format",
-            "@lint",
+            "@test:types",
             "@test:coverage",
-            "@test:types"
+            "@lint",
+            "@format"
         ]
     },
     "extra": {

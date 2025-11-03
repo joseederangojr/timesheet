@@ -234,5 +234,18 @@ describe('GetUsersQuery', function (): void {
                 // Should sort by 'name' (first allowed)
             },
         );
+
+        it(
+            'handles invalid sort direction by falling back to desc',
+            function (): void {
+                User::factory(3)->create();
+
+                $filters = new UserFilters(sortDirection: 'invalid_direction');
+                $result = $this->query->handle($filters);
+
+                expect($result->count())->toBe(3);
+                // Should sort by 'desc' (fallback for invalid direction)
+            },
+        );
     });
 });
