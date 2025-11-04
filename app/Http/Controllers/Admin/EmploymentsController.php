@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Actions\CreateEmployment;
 use App\Actions\DeleteEmployment;
+use App\Actions\EndEmployment;
 use App\Actions\UpdateEmployment;
 use App\Data\CreateEmploymentData;
 use App\Data\EmploymentFilters;
@@ -17,9 +18,9 @@ use App\Http\Requests\Admin\EmploymentEditRequest;
 use App\Http\Requests\Admin\EmploymentIndexRequest;
 use App\Http\Requests\Admin\EmploymentShowRequest;
 use App\Http\Requests\Admin\UpdateEmploymentRequest;
-use App\Models\Client;
 use App\Models\Employment;
-use App\Models\User;
+use App\Queries\FindClientByIdQuery;
+use App\Queries\FindUserByIdQuery;
 use App\Queries\GetAllClientsQuery;
 use App\Queries\GetAllUsersQuery;
 use App\Queries\GetEmploymentByIdQuery;
@@ -37,7 +38,9 @@ final readonly class EmploymentsController
         GetAllClientsQuery $getAllClientsQuery,
     ): Response {
         $filters = EmploymentFilters::fromRequest($request);
-        $employments = $getEmploymentsQuery->handle($filters)->withQueryString();
+        $employments = $getEmploymentsQuery
+            ->handle($filters)
+            ->withQueryString();
 
         return Inertia::render('admin/employments/index', [
             'employments' => fn () => $employments,
@@ -68,11 +71,13 @@ final readonly class EmploymentsController
     public function store(
         CreateEmploymentRequest $request,
         CreateEmployment $createEmployment,
+        FindUserByIdQuery $findUserByIdQuery,
+        FindClientByIdQuery $findClientByIdQuery,
     ): RedirectResponse {
         try {
             /** @var array{
-             *     user_id: int,
-             *     client_id: int|null,
+             *     user_id: int|string,
+             *     client_id: int|string,
              *     position: string,
              *     hire_date: string,
              *     status: string,
@@ -83,9 +88,8 @@ final readonly class EmploymentsController
              * } $validated */
             $validated = $request->validated();
 
-            /** @var User $user */
-            $user = User::findOrFail($validated['user_id']);
-            $client = isset($validated['client_id']) ? Client::query()->findOrFail($validated['client_id']) : null;
+            $user = $findUserByIdQuery->handle((int) $validated['user_id']);
+            $client = $findClientByIdQuery->handle((int) $validated['client_id']);
 
             $data = new CreateEmploymentData(
                 user: $user,
@@ -110,7 +114,9 @@ final readonly class EmploymentsController
                 ->withInput()
                 ->with('status', [
                     'type' => 'error',
-                    'message' => __('Failed to create employment record. Please try again.'),
+                    'message' => __(
+                        'Failed to create employment record. Please try again.',
+                    ),
                 ]);
         }
     }
@@ -147,11 +153,13 @@ final readonly class EmploymentsController
         UpdateEmploymentRequest $request,
         Employment $employment,
         UpdateEmployment $updateEmployment,
+        FindUserByIdQuery $findUserByIdQuery,
+        FindClientByIdQuery $findClientByIdQuery,
     ): RedirectResponse {
         try {
             /** @var array{
-             *     user_id: int,
-             *     client_id: int|null,
+             *     user_id: int|string,
+             *     client_id: int|string,
              *     position: string,
              *     hire_date: string,
              *     status: string,
@@ -162,9 +170,8 @@ final readonly class EmploymentsController
              * } $validated */
             $validated = $request->validated();
 
-            /** @var User $user */
-            $user = User::findOrFail($validated['user_id']);
-            $client = isset($validated['client_id']) ? Client::query()->findOrFail($validated['client_id']) : null;
+            $user = $findUserByIdQuery->handle((int) $validated['user_id']);
+            $client = $findClientByIdQuery->handle((int) $validated['client_id']);
 
             $data = new UpdateEmploymentData(
                 employment: $employment,
@@ -190,8 +197,31 @@ final readonly class EmploymentsController
                 ->withInput()
                 ->with('status', [
                     'type' => 'error',
-                    'message' => __('Failed to update employment record. Please try again.'),
+                    'message' => __(
+                        'Failed to update employment record. Please try again.',
+                    ),
                 ]);
+        }
+    }
+
+    public function end(
+        Employment $employment,
+        EndEmployment $endEmployment,
+    ): RedirectResponse {
+        try {
+            $endEmployment->handle($employment);
+
+            return to_route('admin.employments.index')->with('status', [
+                'type' => 'success',
+                'message' => __('Employment record ended successfully.'),
+            ]);
+        } catch (Exception) {
+            return back()->with('status', [
+                'type' => 'error',
+                'message' => __(
+                    'Failed to end employment record. Please try again.',
+                ),
+            ]);
         }
     }
 
@@ -209,7 +239,9 @@ final readonly class EmploymentsController
         } catch (Exception) {
             return back()->with('status', [
                 'type' => 'error',
-                'message' => __('Failed to delete employment record. Please try again.'),
+                'message' => __(
+                    'Failed to delete employment record. Please try again.',
+                ),
             ]);
         }
     }
