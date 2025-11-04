@@ -176,6 +176,7 @@ const userColumns: ColumnDef<User>[] = [
     },
     {
         accessorKey: 'email_verified_at',
+        enableSorting: false,
         header: ({ column }) => {
             return <DataTableColumnHeader column={column} title="Verified" />;
         },
