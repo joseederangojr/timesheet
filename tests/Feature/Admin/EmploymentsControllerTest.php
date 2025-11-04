@@ -74,9 +74,11 @@ describe('Admin Employments Controller', function (): void {
         ];
 
         $response = $this->actingAs($this->admin)
-            ->postJson(route('admin.employments.store'), $data);
+            ->withSession(['_token' => 'test-token'])
+            ->post(route('admin.employments.store'), array_merge($data, ['_token' => 'test-token']));
 
-        $response->assertRedirect(route('admin.employments.index'))
+        expect($response)
+            ->assertRedirect(route('admin.employments.index'))
             ->assertSessionHas('status.type', 'success');
 
         $this->assertDatabaseHas('employments', [
@@ -117,13 +119,12 @@ describe('Admin Employments Controller', function (): void {
     });
 
     it('updates employment successfully', function (): void {
-        $this->withoutMiddleware('web');
-
         $employment = Employment::factory()->create();
         $newUser = User::factory()->create();
         $newClient = Client::factory()->create();
 
         $data = [
+            '_token' => 'test-token',
             'user_id' => $newUser->id,
             'client_id' => $newClient->id,
             'position' => 'Senior Software Developer',
@@ -136,9 +137,11 @@ describe('Admin Employments Controller', function (): void {
         ];
 
         $response = $this->actingAs($this->admin)
-            ->putJson(route('admin.employments.update', $employment), $data);
+            ->withSession(['_token' => 'test-token'])
+            ->put(route('admin.employments.update', $employment), $data);
 
-        $response->assertRedirect(route('admin.employments.index'))
+        expect($response)
+            ->assertRedirect(route('admin.employments.index'))
             ->assertSessionHas('status.type', 'success');
 
         $employment->refresh();
@@ -147,7 +150,7 @@ describe('Admin Employments Controller', function (): void {
         expect($employment->client_id)->toBe($newClient->id);
         expect($employment->position)->toBe('Senior Software Developer');
         expect($employment->status)->toBe(EmploymentStatus::ACTIVE);
-        expect($employment->salary)->toBe(85000.00);
+        expect($employment->salary)->toBe('85000.00');
     });
 
     it('fails to update employment with invalid data', function (): void {
@@ -156,6 +159,7 @@ describe('Admin Employments Controller', function (): void {
         $employment = Employment::factory()->create();
 
         $data = [
+            '_token' => 'test-token',
             'user_id' => 999, // Non-existent user
             'client_id' => 999, // Non-existent client
             'position' => '',
@@ -164,10 +168,11 @@ describe('Admin Employments Controller', function (): void {
         ];
 
         $response = $this->actingAs($this->admin)
+            ->withSession(['_token' => 'test-token'])
             ->putJson(route('admin.employments.update', $employment), $data);
 
-        $response->assertRedirect()
-            ->assertSessionHas('status.type', 'error');
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['user_id', 'client_id', 'position', 'hire_date', 'status', 'effective_date']);
 
         $employment->refresh();
 
@@ -180,7 +185,8 @@ describe('Admin Employments Controller', function (): void {
         $employment = Employment::factory()->create();
 
         $response = $this->actingAs($this->admin)
-            ->deleteJson(route('admin.employments.destroy', $employment));
+            ->withSession(['_token' => 'test-token'])
+            ->deleteJson(route('admin.employments.destroy', $employment), ['_token' => 'test-token']);
 
         $response->assertRedirect(route('admin.employments.index'))
             ->assertSessionHas('status.type', 'success');
