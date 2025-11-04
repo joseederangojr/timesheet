@@ -6,6 +6,7 @@ import { DataTableViewOptions } from '@/components/data-table-view-options';
 import { SearchInput } from '@/components/search-input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     DataTable,
@@ -23,6 +24,12 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Paginated } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
 import {
@@ -30,7 +37,7 @@ import {
     PaginationState,
     SortingState,
 } from '@tanstack/react-table';
-import { Edit, Plus } from 'lucide-react';
+import { ChevronDown, Edit, Eye, Plus } from 'lucide-react';
 import * as React from 'react';
 
 interface Client {
@@ -300,34 +307,29 @@ interface ClientActionsCellProps {
 
 function ClientActionsCell({ client }: ClientActionsCellProps) {
     return (
-        <div className="flex items-center gap-2">
-            <Link
-                href={`/admin/clients/${client.id}`}
-                data-testid={`view-client-${client.id}`}
-            >
-                <Button variant="ghost" size="sm">
+        <ButtonGroup>
+            <Button variant="outline" size="sm" asChild>
+                <Link href={`/admin/clients/${client.id}`}>
+                    <Eye className="mr-2 h-4 w-4" />
                     View
-                </Button>
-            </Link>
-            <ClientEditDialog client={client} />
-        </div>
-    );
-}
-
-interface ClientEditDialogProps {
-    client: Client;
-}
-
-function ClientEditDialog({ client }: ClientEditDialogProps) {
-    return (
-        <Link
-            href={`/admin/clients/${client.id}/edit`}
-            data-testid={`edit-client-${client.id}`}
-        >
-            <Button variant="ghost" size="sm">
-                <Edit className="h-4 w-4" />
+                </Link>
             </Button>
-        </Link>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                        <ChevronDown className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                        <Link href={`/admin/clients/${client.id}/edit`}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit
+                        </Link>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </ButtonGroup>
     );
 }
 

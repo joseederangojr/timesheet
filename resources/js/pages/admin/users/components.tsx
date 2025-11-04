@@ -1,12 +1,13 @@
-import { UserForm } from '@/components/admin/user-form';
-import { ComboboxFilter } from '@/components/combobox-filter';
-import { DataTableColumnHeader } from '@/components/data-table-column-header';
-import { DataTablePagination } from '@/components/data-table-pagination';
-import { DataTableViewOptions } from '@/components/data-table-view-options';
-import { SearchInput } from '@/components/search-input';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { UserForm } from "@/components/admin/user-form";
+import { ComboboxFilter } from "@/components/combobox-filter";
+import { DataTableColumnHeader } from "@/components/data-table-column-header";
+import { DataTablePagination } from "@/components/data-table-pagination";
+import { DataTableViewOptions } from "@/components/data-table-view-options";
+import { SearchInput } from "@/components/search-input";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     DataTable,
     DataTableContent,
@@ -14,24 +15,30 @@ import {
     DataTableHeader,
     DataTableRoot,
     useDataTable,
-} from '@/components/ui/data-table';
+} from "@/components/ui/data-table";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 
-import { Paginated } from '@/types';
-import { Link, router, usePage } from '@inertiajs/react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Paginated } from "@/types";
+import { Link, router, usePage } from "@inertiajs/react";
 import {
     ColumnDef,
     PaginationState,
     SortingState,
-} from '@tanstack/react-table';
-import { Edit, Plus } from 'lucide-react';
-import * as React from 'react';
+} from "@tanstack/react-table";
+import { ChevronDown, Edit, Eye, Plus } from "lucide-react";
+import * as React from "react";
 
 interface User {
     id: number;
@@ -64,7 +71,7 @@ export function UserSearchInput() {
         });
     return (
         <SearchInput
-            value={props.filters.search ?? ''}
+            value={props.filters.search ?? ""}
             placeholder="Search by name or email"
             onValueChange={handleValueChange}
         />
@@ -73,7 +80,7 @@ export function UserSearchInput() {
 
 export function onAdminUsersFilterChange(filters: UsersFilters) {
     router.get(
-        '/admin/users',
+        "/admin/users",
         { ...filters },
         {
             preserveState: true,
@@ -86,15 +93,15 @@ export function UserRoleFilter() {
     const {
         props: { filters },
     } = usePage<{ filters: UsersFilters }>();
-    const value = filters?.role ?? '';
+    const value = filters?.role ?? "";
 
     const handleValueChange = (value?: string) => {
         onAdminUsersFilterChange({ ...filters, role: value });
     };
 
     const roles = [
-        { value: 'admin', label: 'Admin' },
-        { value: 'employee', label: 'Employee' },
+        { value: "admin", label: "Admin" },
+        { value: "employee", label: "Employee" },
     ];
 
     return (
@@ -111,15 +118,15 @@ export function UserVerifiedFilter() {
     const {
         props: { filters },
     } = usePage<{ filters: UsersFilters }>();
-    const value = filters?.verified ?? '';
+    const value = filters?.verified ?? "";
 
     const handleValueChange = (value?: string) => {
         onAdminUsersFilterChange({ ...filters, verified: value });
     };
 
     const status = [
-        { value: 'verified', label: 'Verified' },
-        { value: 'unverified', label: 'Unverified' },
+        { value: "verified", label: "Verified" },
+        { value: "unverified", label: "Unverified" },
     ];
 
     return (
@@ -134,7 +141,7 @@ export function UserVerifiedFilter() {
 
 const userColumns: ColumnDef<User>[] = [
     {
-        accessorKey: 'name',
+        accessorKey: "name",
         header: ({ column }) => {
             return <DataTableColumnHeader column={column} title="Name" />;
         },
@@ -142,9 +149,9 @@ const userColumns: ColumnDef<User>[] = [
             const user = row.original;
             const getInitials = (name: string) => {
                 return name
-                    .split(' ')
+                    .split(" ")
                     .map((word) => word[0])
-                    .join('')
+                    .join("")
                     .toUpperCase()
                     .slice(0, 2);
             };
@@ -161,60 +168,60 @@ const userColumns: ColumnDef<User>[] = [
         },
     },
     {
-        accessorKey: 'email',
+        accessorKey: "email",
         header: ({ column }) => {
             return <DataTableColumnHeader column={column} title="Email" />;
         },
         cell: ({ row }) => (
-            <div className="text-muted-foreground">{row.getValue('email')}</div>
+            <div className="text-muted-foreground">{row.getValue("email")}</div>
         ),
     },
     {
-        accessorKey: 'roles',
-        header: 'Roles',
+        accessorKey: "roles",
+        header: "Roles",
         cell: ({ row }) => <UserRoleBadge roles={row.original.roles} />,
     },
     {
-        accessorKey: 'email_verified_at',
+        accessorKey: "email_verified_at",
         enableSorting: false,
         header: ({ column }) => {
             return <DataTableColumnHeader column={column} title="Verified" />;
         },
         cell: ({ row }) => (
             <UserVerificationBadge
-                verified={!!row.getValue('email_verified_at')}
+                verified={!!row.getValue("email_verified_at")}
             />
         ),
     },
     {
-        accessorKey: 'created_at',
+        accessorKey: "created_at",
         header: ({ column }) => {
             return <DataTableColumnHeader column={column} title="Joined At" />;
         },
         cell: ({ row }) => {
             const formatDate = (dateString: string) => {
-                return new Date(dateString).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
+                return new Date(dateString).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
                 });
             };
             return (
                 <div className="text-muted-foreground">
-                    {formatDate(row.getValue('created_at'))}
+                    {formatDate(row.getValue("created_at"))}
                 </div>
             );
         },
     },
     {
-        id: 'actions',
-        header: 'Actions',
+        id: "actions",
+        header: "Actions",
         cell: ({ row }) => <UserActionsCell user={row.original} />,
     },
 ];
 
 export function AdminUsersDataTable() {
-    'use no memo';
+    "use no memo";
     const {
         props: { users, filters },
     } = usePage<{ filters: UsersFilters; users: Paginated<User> }>();
@@ -225,7 +232,7 @@ export function AdminUsersDataTable() {
         onAdminUsersFilterChange({
             ...filters,
             sort_by: sort.id,
-            sort_direction: sort.desc ? 'desc' : 'asc',
+            sort_direction: sort.desc ? "desc" : "asc",
         });
     };
 
@@ -234,7 +241,7 @@ export function AdminUsersDataTable() {
             ? [
                   {
                       id: filters.sort_by,
-                      desc: filters.sort_direction === 'desc',
+                      desc: filters.sort_direction === "desc",
                   },
               ]
             : [];
@@ -296,7 +303,7 @@ export function AdminUsersDataTable() {
 }
 
 interface UserRoleBadgeProps {
-    roles: User['roles'];
+    roles: User["roles"];
 }
 
 function UserRoleBadge({ roles }: UserRoleBadgeProps) {
@@ -348,26 +355,33 @@ interface UserActionsCellProps {
 
 function UserActionsCell({ user }: UserActionsCellProps) {
     return (
-        <div className="flex items-center gap-2">
-            <UserEditDialog user={user} />
-        </div>
-    );
-}
-
-interface UserEditDialogProps {
-    user: User;
-}
-
-function UserEditDialog({ user }: UserEditDialogProps) {
-    return (
-        <Link
-            href={`/admin/users/${user.id}/edit`}
-            data-testid={`edit-user-${user.id}`}
-        >
-            <Button variant="ghost" size="sm">
-                <Edit className="h-4 w-4" />
+        <ButtonGroup>
+            <Button variant="outline" size="sm" asChild>
+                <Link href={`/admin/users/${user.id}`}>
+                    <Eye className="mr-2 h-4 w-4" />
+                    View
+                </Link>
             </Button>
-        </Link>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        aria-label="More actions"
+                    >
+                        <ChevronDown className="size-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-32">
+                    <DropdownMenuItem asChild>
+                        <Link href={`/admin/users/${user.id}/edit`}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit
+                        </Link>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </ButtonGroup>
     );
 }
 
