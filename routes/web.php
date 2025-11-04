@@ -112,4 +112,44 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function ():
         App\Http\Controllers\Admin\ClientsController::class,
         'update',
     ])->name('clients.update');
+
+    Route::get('/employments', [
+        App\Http\Controllers\Admin\EmploymentsController::class,
+        'index',
+    ])->name('employments.index');
+
+    Route::get('/employments/create', [
+        App\Http\Controllers\Admin\EmploymentsController::class,
+        'create',
+    ])->name('employments.create');
+
+    Route::post('/employments', [
+        App\Http\Controllers\Admin\EmploymentsController::class,
+        'store',
+    ])->name('employments.store');
+
+    Route::get('/employments/{employment}', [
+        App\Http\Controllers\Admin\EmploymentsController::class,
+        'show',
+    ])->name('employments.show');
+
+    Route::get('/employments/{employment}/edit', [
+        App\Http\Controllers\Admin\EmploymentsController::class,
+        'edit',
+    ])->name('employments.edit');
+
+    Route::put('/employments/{employment}', [
+        App\Http\Controllers\Admin\EmploymentsController::class,
+        'update',
+    ])->name('employments.update');
+
+    Route::patch('/employments/{employment}/end', [
+        App\Http\Controllers\Admin\EmploymentsController::class,
+        'end',
+    ])->name('employments.end');
+
+    Route::delete('/employments/{employment}', [
+        App\Http\Controllers\Admin\EmploymentsController::class,
+        'destroy',
+    ])->name('employments.destroy');
 });

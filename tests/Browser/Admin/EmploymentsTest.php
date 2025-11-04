@@ -18,7 +18,9 @@ describe('Admin Employments Management', function (): void {
         $employeeRole = resolve(FindRoleByNameQuery::class)->handle('employee');
 
         $this->admin = User::factory()->hasAttached($adminRole)->create();
-        $this->employee = User::factory()->hasAttached($employeeRole)->create(['name' => 'John Employee']);
+        $this->employee = User::factory()
+            ->hasAttached($employeeRole)
+            ->create(['name' => 'John Employee']);
         $this->client = Client::factory()->create(['name' => 'Tech Corp']);
     });
 
@@ -35,10 +37,12 @@ describe('Admin Employments Management', function (): void {
     });
 
     it('displays employments index page with data table', function (): void {
-        Employment::factory()->count(3)->create([
-            'user_id' => $this->employee->id,
-            'client_id' => $this->client->id,
-        ]);
+        Employment::factory()
+            ->count(3)
+            ->create([
+                'user_id' => $this->employee->id,
+                'client_id' => $this->client->id,
+            ]);
 
         $this->actingAs($this->admin);
 
@@ -84,9 +88,7 @@ describe('Admin Employments Management', function (): void {
 
         $page = visit('/admin/users/'.$this->employee->id);
 
-        $page
-            ->assertSee('John Employee')
-            ->assertSee('Employment Information');
+        $page->assertSee('John Employee')->assertSee('Employment Information');
     });
 
     it('can access employment show page', function (): void {
@@ -95,7 +97,7 @@ describe('Admin Employments Management', function (): void {
             'client_id' => $this->client->id,
             'position' => 'Full Stack Developer',
             'status' => 'active',
-            'salary' => 75000.00,
+            'salary' => 75000.0,
         ]);
 
         $this->actingAs($this->admin);
@@ -119,9 +121,7 @@ describe('Admin Employments Management', function (): void {
 
         $page = visit('/admin/employments/'.$employment->id);
 
-        $page
-            ->assertSee('Employment Details')
-            ->assertSee('End Employment'); // Button should be visible for active employment
+        $page->assertSee('Employment Details')->assertSee('End Employment'); // Button should be visible for active employment
     });
 
     it('prevents editing active employment details', function (): void {
@@ -190,9 +190,7 @@ describe('Admin Employments Management', function (): void {
 
         $page = visit('/admin/employments');
 
-        $page
-            ->assertSee('Frontend Developer')
-            ->assertSee('Backend Developer');
+        $page->assertSee('Frontend Developer')->assertSee('Backend Developer');
     });
 
     it('requires admin authentication for employment pages', function (): void {
@@ -229,7 +227,7 @@ describe('Admin Employments Management', function (): void {
             'client_id' => $this->client->id,
             'position' => 'Senior Developer',
             'status' => 'active',
-            'salary' => 85000.00,
+            'salary' => 85000.0,
         ]);
     });
 
@@ -241,8 +239,9 @@ describe('Admin Employments Management', function (): void {
 
         $this->actingAs($this->admin);
 
-        $page = visit('/admin/employments/'.$employment->id)
-            ->press('Delete Employment');
+        $page = visit('/admin/employments/'.$employment->id)->press(
+            'Delete Employment',
+        );
 
         $page
             ->assertPathIs('/admin/employments')
@@ -293,9 +292,7 @@ describe('Admin Employments Management', function (): void {
 
         $page = visit('/admin/employments?status=active');
 
-        $page
-            ->assertSee('Active Job')
-            ->assertDontSee('Terminated Job');
+        $page->assertSee('Active Job')->assertDontSee('Terminated Job');
     });
 
     it('can filter employments by client', function (): void {
@@ -317,9 +314,7 @@ describe('Admin Employments Management', function (): void {
 
         $page = visit('/admin/employments?client='.$this->client->id);
 
-        $page
-            ->assertSee('Tech Corp Job')
-            ->assertDontSee('Another Corp Job');
+        $page->assertSee('Tech Corp Job')->assertDontSee('Another Corp Job');
     });
 
     it('displays employment history on user profile', function (): void {
@@ -355,8 +350,9 @@ describe('Admin Employments Management', function (): void {
 
         $this->actingAs($this->admin);
 
-        $page = visit('/admin/users/'.$this->employee->id)
-            ->click('Clickable Job');
+        $page = visit('/admin/users/'.$this->employee->id)->click(
+            'Clickable Job',
+        );
 
         $page->assertPathIs('/admin/employments/'.$employment->id);
     });
@@ -369,8 +365,9 @@ describe('Admin Employments Management', function (): void {
 
         $this->actingAs($this->admin);
 
-        $page = visit('/admin/employments/'.$employment->id)
-            ->click('John Employee');
+        $page = visit('/admin/employments/'.$employment->id)->click(
+            'John Employee',
+        );
 
         $page->assertPathIs('/admin/users/'.$this->employee->id);
     });
@@ -384,8 +381,9 @@ describe('Admin Employments Management', function (): void {
 
         $this->actingAs($this->admin);
 
-        $page = visit('/admin/employments/'.$employment->id)
-            ->click('Tech Corp');
+        $page = visit('/admin/employments/'.$employment->id)->click(
+            'Tech Corp',
+        );
 
         $page->assertPathIs('/admin/clients/'.$this->client->id);
     });

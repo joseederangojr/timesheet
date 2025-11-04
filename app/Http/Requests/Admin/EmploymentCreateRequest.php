@@ -10,6 +10,7 @@ final class EmploymentCreateRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('create', \App\Models\Employment::class) ?? false;
+        return $this->user()?->can('create', \App\Models\Employment::class) ??
+            false;
     }
 }

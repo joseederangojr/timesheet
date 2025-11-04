@@ -15,7 +15,9 @@ it('has inactive status', function (): void {
 });
 
 it('has terminated status', function (): void {
-    expect(EmploymentStatus::TERMINATED)->toBeInstanceOf(EmploymentStatus::class);
+    expect(EmploymentStatus::TERMINATED)->toBeInstanceOf(
+        EmploymentStatus::class,
+    );
     expect(EmploymentStatus::TERMINATED->value)->toBe('terminated');
 });
 
@@ -33,8 +35,12 @@ it('returns correct label for terminated status', function (): void {
 
 it('can be created from string values', function (): void {
     expect(EmploymentStatus::from('active'))->toBe(EmploymentStatus::ACTIVE);
-    expect(EmploymentStatus::from('inactive'))->toBe(EmploymentStatus::INACTIVE);
-    expect(EmploymentStatus::from('terminated'))->toBe(EmploymentStatus::TERMINATED);
+    expect(EmploymentStatus::from('inactive'))->toBe(
+        EmploymentStatus::INACTIVE,
+    );
+    expect(EmploymentStatus::from('terminated'))->toBe(
+        EmploymentStatus::TERMINATED,
+    );
 });
 
 it('can be used in match expressions', function (): void {

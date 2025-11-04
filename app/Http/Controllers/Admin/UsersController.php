@@ -95,7 +95,7 @@ final readonly class UsersController
     public function show(UserShowRequest $request, User $user): Response
     {
         return Inertia::render('admin/users/show', [
-            'user' => $user->load('roles'),
+            'user' => $user->load(['roles', 'employments.client']),
         ]);
     }
 

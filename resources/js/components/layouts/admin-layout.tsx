@@ -42,6 +42,11 @@ const navigationItems: NavigationItem[] = [
         href: '/admin/clients',
         icon: Building2,
     },
+    {
+        label: 'Employments',
+        href: '/admin/employments',
+        icon: Users,
+    },
 ];
 
 export function AdminLayout({ children, currentPath }: AdminLayoutProps) {

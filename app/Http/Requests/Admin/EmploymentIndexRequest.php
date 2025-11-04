@@ -10,7 +10,8 @@ final class EmploymentIndexRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('viewAny', \App\Models\Employment::class) ?? false;
+        return $this->user()?->can('viewAny', \App\Models\Employment::class) ??
+            false;
     }
 
     /**

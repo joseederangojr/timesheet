@@ -33,25 +33,29 @@ describe('Admin Employments Controller', function (): void {
 
         $employments = Employment::factory()->count(3)->create();
 
-        $response = $this->actingAs($this->admin)
-            ->get(route('admin.employments.index'));
+        $response = $this->actingAs($this->admin)->get(
+            route('admin.employments.index'),
+        );
 
-        $response->assertInertia(fn (Assert $page): Assert => $page
-            ->component('admin/employments/index')
-            ->has('employments')
-            ->has('filters')
-            ->has('clients')
+        $response->assertInertia(
+            fn (Assert $page): Assert => $page
+                ->component('admin/employments/index')
+                ->has('employments')
+                ->has('filters')
+                ->has('clients'),
         );
     });
 
     it('displays employments create page', function (): void {
-        $response = $this->actingAs($this->admin)
-            ->get(route('admin.employments.create'));
+        $response = $this->actingAs($this->admin)->get(
+            route('admin.employments.create'),
+        );
 
-        $response->assertInertia(fn (Assert $page): Assert => $page
-            ->component('admin/employments/create')
-            ->has('clients')
-            ->has('users')
+        $response->assertInertia(
+            fn (Assert $page): Assert => $page
+                ->component('admin/employments/create')
+                ->has('clients')
+                ->has('users'),
         );
     });
 
@@ -75,7 +79,10 @@ describe('Admin Employments Controller', function (): void {
 
         $response = $this->actingAs($this->admin)
             ->withSession(['_token' => 'test-token'])
-            ->post(route('admin.employments.store'), array_merge($data, ['_token' => 'test-token']));
+            ->post(
+                route('admin.employments.store'),
+                array_merge($data, ['_token' => 'test-token']),
+            );
 
         expect($response)
             ->assertRedirect(route('admin.employments.index'))
@@ -86,35 +93,39 @@ describe('Admin Employments Controller', function (): void {
             'client_id' => $client->id,
             'position' => 'Software Developer',
             'status' => 'active',
-            'salary' => 75000.00,
+            'salary' => 75000.0,
         ]);
     });
 
     it('displays employment show page', function (): void {
         $employment = Employment::factory()->create();
 
-        $response = $this->actingAs($this->admin)
-            ->get(route('admin.employments.show', $employment));
+        $response = $this->actingAs($this->admin)->get(
+            route('admin.employments.show', $employment),
+        );
 
-        $response->assertInertia(fn (Assert $page): Assert => $page
-            ->component('admin/employments/show')
-            ->has('employment')
-            ->where('employment.id', $employment->id)
+        $response->assertInertia(
+            fn (Assert $page): Assert => $page
+                ->component('admin/employments/show')
+                ->has('employment')
+                ->where('employment.id', $employment->id),
         );
     });
 
     it('displays employment edit page', function (): void {
         $employment = Employment::factory()->create();
 
-        $response = $this->actingAs($this->admin)
-            ->get(route('admin.employments.edit', $employment));
+        $response = $this->actingAs($this->admin)->get(
+            route('admin.employments.edit', $employment),
+        );
 
-        $response->assertInertia(fn (Assert $page): Assert => $page
-            ->component('admin/employments/edit')
-            ->has('employment')
-            ->has('clients')
-            ->has('users')
-            ->where('employment.id', $employment->id)
+        $response->assertInertia(
+            fn (Assert $page): Assert => $page
+                ->component('admin/employments/edit')
+                ->has('employment')
+                ->has('clients')
+                ->has('users')
+                ->where('employment.id', $employment->id),
         );
     });
 
@@ -171,8 +182,16 @@ describe('Admin Employments Controller', function (): void {
             ->withSession(['_token' => 'test-token'])
             ->putJson(route('admin.employments.update', $employment), $data);
 
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['user_id', 'client_id', 'position', 'hire_date', 'status', 'effective_date']);
+        $response
+            ->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'user_id',
+                'client_id',
+                'position',
+                'hire_date',
+                'status',
+                'effective_date',
+            ]);
 
         $employment->refresh();
 
@@ -186,9 +205,12 @@ describe('Admin Employments Controller', function (): void {
 
         $response = $this->actingAs($this->admin)
             ->withSession(['_token' => 'test-token'])
-            ->deleteJson(route('admin.employments.destroy', $employment), ['_token' => 'test-token']);
+            ->deleteJson(route('admin.employments.destroy', $employment), [
+                '_token' => 'test-token',
+            ]);
 
-        $response->assertRedirect(route('admin.employments.index'))
+        $response
+            ->assertRedirect(route('admin.employments.index'))
             ->assertSessionHas('status.type', 'success');
 
         $this->assertDatabaseMissing('employments', [

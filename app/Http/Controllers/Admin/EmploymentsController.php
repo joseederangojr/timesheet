@@ -89,7 +89,9 @@ final readonly class EmploymentsController
             $validated = $request->validated();
 
             $user = $findUserByIdQuery->handle((int) $validated['user_id']);
-            $client = $findClientByIdQuery->handle((int) $validated['client_id']);
+            $client = $findClientByIdQuery->handle(
+                (int) $validated['client_id'],
+            );
 
             $data = new CreateEmploymentData(
                 user: $user,
@@ -171,7 +173,9 @@ final readonly class EmploymentsController
             $validated = $request->validated();
 
             $user = $findUserByIdQuery->handle((int) $validated['user_id']);
-            $client = $findClientByIdQuery->handle((int) $validated['client_id']);
+            $client = $findClientByIdQuery->handle(
+                (int) $validated['client_id'],
+            );
 
             $data = new UpdateEmploymentData(
                 employment: $employment,

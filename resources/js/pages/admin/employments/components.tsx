@@ -446,7 +446,7 @@ import { useFormDefaults } from '@/hooks/use-form-defaults';
 import { cn } from '@/lib/utils';
 import { Form } from '@inertiajs/react';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface Client {
     id: number;
@@ -494,13 +494,6 @@ export function EmploymentForm({
     );
     const [userOpen, setUserOpen] = useState(false);
     const [clientOpen, setClientOpen] = useState(false);
-
-    // Pre-select user if user_id is in URL
-    useEffect(() => {
-        if (preselectedUserId && !selectedUserId) {
-            setSelectedUserId(preselectedUserId);
-        }
-    }, [preselectedUserId, selectedUserId]);
 
     const selectedUser = users.find(
         (user) => user.id.toString() === selectedUserId,

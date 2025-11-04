@@ -10,6 +10,7 @@ final class EmploymentEditRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('update', $this->route('employment')) ?? false;
+        return $this->user()?->can('update', $this->route('employment')) ??
+            false;
     }
 }

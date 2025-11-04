@@ -58,7 +58,9 @@ it('updates employment successfully', function (): void {
     expect($updatedEmployment->status)->toBe(EmploymentStatus::ACTIVE);
     expect($updatedEmployment->salary)->toBe('90000.00');
     expect($updatedEmployment->work_location)->toBe('Remote');
-    expect($updatedEmployment->effective_date->format('Y-m-d'))->toBe('2023-06-01');
+    expect($updatedEmployment->effective_date->format('Y-m-d'))->toBe(
+        '2023-06-01',
+    );
     expect($updatedEmployment->end_date->format('Y-m-d'))->toBe('2025-06-01');
 
     $this->assertDatabaseHas('employments', [

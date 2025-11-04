@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Auth;
 use Illuminate\Notifications\Notifiable;
 
@@ -26,6 +27,14 @@ final class User extends Auth
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_roles');
+    }
+
+    /**
+     * @return HasMany<Employment, $this>
+     */
+    public function employments(): HasMany
+    {
+        return $this->hasMany(Employment::class);
     }
 
     protected function casts(): array

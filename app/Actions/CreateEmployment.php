@@ -20,7 +20,11 @@ final readonly class CreateEmployment
                     ->where('user_id', $data->user->id)
                     ->where('status', 'active')
                     ->exists();
-                throw_if($existingActive, InvalidArgumentException::class, 'User already has an active employment record.');
+                throw_if(
+                    $existingActive,
+                    InvalidArgumentException::class,
+                    'User already has an active employment record.',
+                );
             }
 
             return Employment::query()->create([

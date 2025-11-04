@@ -15,7 +15,12 @@ final class AdminSeeder extends Seeder
         $adminEmail = config('app.admin.email');
         $adminPassword = config('app.admin.password');
 
-        if (! is_string($adminEmail) || ! is_string($adminPassword) || ($adminEmail === '' || $adminEmail === '0') || ($adminPassword === '' || $adminPassword === '0')) {
+        if (
+            ! is_string($adminEmail) ||
+            ! is_string($adminPassword) ||
+            ($adminEmail === '' || $adminEmail === '0') ||
+            ($adminPassword === '' || $adminPassword === '0')
+        ) {
             $this->command->warn(
                 'ADMIN_EMAIL and ADMIN_PASSWORD environment variables are required to seed admin user.',
             );

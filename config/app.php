@@ -155,4 +155,8 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+    'admin' => [
+        'email' => env('ADMIN_EMAIL', 'admin@user.com'),
+        'password' => env('ADMIN_PASSWORD', 'password'),
+    ],
 ];
